@@ -1,0 +1,3760 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Автобуси ОТГ</title>
+  <meta name="theme-color" content="#141414">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Автобуси ОТГ">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="manifest" href="/pidhorodne-bus-live/manifest.json?v=3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/pidhorodne-bus-live/apple-touch-icon.png?v=3">
+  <link rel="icon" type="image/png" sizes="192x192" href="/pidhorodne-bus-live/icon-192.png?v=3">
+  <link rel="icon" type="image/png" sizes="512x512" href="/pidhorodne-bus-live/icon-512.png?v=3">
+
+  <style>
+    :root {
+      /* ── Fluent 2 Motion Tokens ── */
+      --f2-curve-decelerate-mid: cubic-bezier(0.1, 0.9, 0.2, 1);
+      --f2-curve-accelerate-mid: cubic-bezier(0.9, 0.1, 1, 0.2);
+      --f2-curve-easy-ease: cubic-bezier(0.33, 0, 0.67, 1);
+      --f2-curve-easy-ease-max: cubic-bezier(0.8, 0, 0.2, 1);
+      --f2-curve-spatial: cubic-bezier(0.16, 1, 0.3, 1);
+      --f2-duration-fast: 150ms;
+      --f2-duration-normal: 200ms;
+      --f2-duration-gentle: 250ms;
+      --f2-duration-slow: 300ms;
+      /* ── Warm Espresso & Obsidian Luxury Foundation ── */
+      --bg: #100c0a;
+      --surface: rgba(28, 22, 18, 0.74);
+      --surface-solid: #18130f;
+      --surface-raised: rgba(42, 33, 27, 0.8);
+      --surface-highlight: rgba(255, 235, 220, 0.06);
+      --border: rgba(255, 230, 210, 0.09);
+      --border-light: rgba(255, 230, 210, 0.16);
+      --border-focus: rgba(226, 147, 66, 0.5);
+
+      /* ── Warm Caramel & Natural Status Accents ── */
+      --accent: #e29342;
+      --accent-glow: rgba(226, 147, 66, 0.3);
+      --accent-soft: rgba(226, 147, 66, 0.14);
+      --gold: #f59e0b;
+      --gold-soft: rgba(245, 158, 11, 0.14);
+      --green: #2ec477;
+      --green-soft: rgba(46, 196, 119, 0.14);
+      --blue: #5b8bf7;
+      --blue-soft: rgba(91, 139, 247, 0.14);
+      --yellow: #f59e0b;
+      --yellow-soft: rgba(245, 158, 11, 0.14);
+      --purple: #a855f7;
+      --purple-soft: rgba(168, 85, 247, 0.14);
+      --red: #f43f5e;
+      --red-soft: rgba(244, 63, 94, 0.14);
+
+      /* ── Typography & Shadows ── */
+      --text: #ffffff;
+      --text-warm: #faf5ee;
+      --text-secondary: #c2b1a1;
+      --text-tertiary: #827263;
+      --radius-sm: 10px;
+      --radius: 16px;
+      --radius-lg: 22px;
+      --radius-pill: 9999px;
+      --glass-blur: blur(24px) saturate(190%);
+      --shadow-card: 0 10px 32px -4px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 235, 220, 0.08);
+      --shadow-glow: 0 0 20px rgba(226, 147, 66, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    button, a, input, select, .bus-row, .pill, .tab-btn, .bar-btn { touch-action: manipulation; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 15% 0%, rgba(226, 147, 66, 0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(130, 80, 45, 0.07) 0%, transparent 60%);
+      background-attachment: fixed;
+      color: var(--text);
+      min-height: 100vh;
+      padding: env(safe-area-inset-top, 16px) 16px calc(env(safe-area-inset-bottom, 20px) + 84px) 16px;
+      line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 480px; margin: 0 auto; }
+
+    /* ── Weather Widget ── */
+    .weather-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border); border-radius: 9999px;
+      padding: 7px 16px; font-size: 12px; color: var(--text-secondary);
+      margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .weather-left { display: flex; align-items: center; gap: 7px; font-weight: 500; }
+    .weather-temp { font-weight: 700; color: var(--text-warm); font-variant-numeric: tabular-nums; }
+
+    /* ── Header ── */
+    header {
+      padding: 4px 0 16px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .brand-title { display: flex; align-items: center; gap: 10px; }
+    .brand-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 11px;
+      background: rgba(226, 147, 66, 0.14); border: 1px solid rgba(226, 147, 66, 0.28);
+      color: var(--accent); flex-shrink: 0;
+    }
+    .title-group h1 {
+      font-size: 19px; font-weight: 800; letter-spacing: -0.3px;
+      color: #ffffff; display: flex; align-items: center; gap: 6px;
+    }
+    .title-group h1 .route-arrow { color: var(--accent); font-weight: 600; opacity: 0.9; }
+    .title-group p { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; font-weight: 500; }
+    .clock {
+      font-size: 13.5px; font-weight: 700; color: var(--text-warm);
+      font-variant-numeric: tabular-nums;
+      padding: 6px 12px;
+      background: rgba(255, 235, 220, 0.05); border: 1px solid var(--border);
+      border-radius: 9999px; backdrop-filter: var(--glass-blur);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .clock-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #2ec477;
+      box-shadow: 0 0 6px #2ec477; display: inline-block;
+    }
+
+    /* ── Driver Top Switcher Bar ── */
+    .driver-mode-bar {
+      background: rgba(30, 23, 19, 0.88); border: 1px solid rgba(226, 147, 66, 0.35);
+      border-radius: var(--radius); padding: 8px 12px; margin-bottom: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      backdrop-filter: var(--glass-blur);
+    }
+    .drv-switch-pills { display: flex; gap: 6px; }
+    .drv-switch-btn {
+      background: rgba(255, 235, 220, 0.05); color: var(--text-secondary);
+      border: 1px solid var(--border); border-radius: 9999px;
+      padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .drv-switch-btn svg { stroke-width: 2.1; }
+    .drv-switch-btn.active {
+      background: var(--accent); color: #100c0a; border-color: var(--accent); font-weight: 700;
+      box-shadow: 0 2px 10px rgba(226, 147, 66, 0.35);
+    }
+    .drv-exit-btn {
+      background: none; border: none; color: var(--red); font-size: 12px;
+      font-weight: 600; cursor: pointer; padding: 4px 8px;
+    }
+
+    .driver-passenger-notice {
+      background: rgba(226, 147, 66, 0.12); border: 1px dashed rgba(226, 147, 66, 0.35);
+      border-radius: 12px; padding: 8px 14px; margin-bottom: 12px;
+      font-size: 12px; color: var(--accent); font-weight: 600;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .drv-back-btn {
+      background: var(--accent); color: #100c0a; border: none; border-radius: 9999px;
+      padding: 5px 14px; font-size: 11.5px; font-weight: 700; cursor: pointer;
+    }
+
+    /* ── Driver Cockpit Layout ── */
+    .drv-active-trip-bar {
+      background: linear-gradient(135deg, rgba(38, 29, 23, 0.95), rgba(26, 20, 16, 0.95));
+      border: 1px solid rgba(226, 147, 66, 0.3);
+      border-radius: 18px; padding: 12px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35); margin-bottom: 12px;
+    }
+    .drv-atb-left { display: flex; align-items: center; gap: 12px; }
+    .drv-atb-time {
+      background: var(--accent); color: #100c0a; font-size: 18px; font-weight: 900;
+      padding: 5px 12px; border-radius: 10px; font-variant-numeric: tabular-nums;
+      letter-spacing: -0.5px;
+    }
+    .drv-atb-meta { display: flex; flex-direction: column; }
+    .drv-atb-route { font-size: 15px; font-weight: 800; color: var(--text); }
+    .drv-atb-dir { font-size: 11.5px; color: var(--text-tertiary); font-weight: 600; margin-top: 1px; }
+    .drv-atb-btn {
+      background: rgba(255, 235, 220, 0.08); border: 1px solid var(--border);
+      color: var(--text-secondary); border-radius: 9999px;
+      padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s;
+    }
+    .drv-atb-btn:active { transform: scale(0.96); background: rgba(255, 235, 220, 0.15); }
+
+    /* Collapsible Route/Trip Picker Drawer */
+    .drv-picker-drawer {
+      background: rgba(22, 17, 14, 0.7);
+      border: 1px solid var(--border); border-radius: 18px;
+      padding: 12px 14px; margin-bottom: 14px;
+      backdrop-filter: var(--glass-blur);
+    }
+    .drv-section-title {
+      font-size: 11px; font-weight: 700; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.6px; margin: 8px 0 8px 2px;
+      display: flex; justify-content: space-between; align-items: center; gap: 6px;
+    }
+    .drv-route-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;
+    }
+    .drv-route-card {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border); border-radius: 14px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      transition: all 0.18s; text-align: left; box-shadow: var(--shadow-card);
+    }
+    .drv-route-card:active { transform: scale(0.98); }
+    .drv-route-card.active {
+      border-color: var(--accent); background: rgba(226, 147, 66, 0.14);
+      box-shadow: 0 0 16px rgba(226, 147, 66, 0.2);
+    }
+    .route-badge-dot {
+      width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+      box-shadow: 0 0 8px currentColor;
+    }
+    .dot-pidg { background: #2ec477; color: #2ec477; }
+    .dot-drag { background: #5b8bf7; color: #5b8bf7; }
+    .dot-zab  { background: #f59e0b; color: #f59e0b; }
+    .dot-dom  { background: #a855f7; color: #a855f7; }
+    .drv-r-name { font-size: 13px; font-weight: 700; color: var(--text); }
+
+    /* Driver Direction Segmented */
+    .drv-dir-segmented {
+      display: flex; background: rgba(255, 235, 220, 0.04);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 3px; gap: 4px; margin: 10px 0 12px 0;
+    }
+    .drv-dir-btn {
+      flex: 1; background: none; border: none; color: var(--text-secondary);
+      border-radius: 9px; padding: 8px 6px; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: center;
+    }
+    .drv-dir-btn.active {
+      background: var(--surface-raised); color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(226, 147, 66, 0.28);
+    }
+
+    /* Trip Chips Strip */
+    .drv-trip-strip {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;
+    }
+    .drv-trip-strip::-webkit-scrollbar { display: none; }
+    .drv-trip-chip {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      border: 1.5px solid var(--border); color: var(--text-secondary);
+      border-radius: 20px; padding: 7px 12px; font-size: 13.5px; font-weight: 700;
+      font-variant-numeric: tabular-nums; cursor: pointer; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
+    }
+    .drv-trip-chip:active { transform: scale(0.96); }
+    .drv-trip-chip.active {
+      background: var(--accent); color: #100c0a; border-color: var(--accent);
+      box-shadow: 0 2px 10px rgba(226, 147, 66, 0.4);
+    }
+    .drv-trip-chip.has-progress { border-color: var(--green); }
+    .drv-trip-chip.cancelled { text-decoration: line-through; opacity: 0.45; border-color: var(--red); }
+
+    /* Focus Hero Card */
+    .drv-focus-hero {
+      background: var(--surface); border: 1.5px solid rgba(46, 196, 119, 0.4);
+      border-radius: 20px; padding: 16px 18px; margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 16px rgba(46, 196, 119, 0.08);
+    }
+    .drv-focus-label-row {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+    }
+    .drv-focus-label {
+      font-size: 11px; font-weight: 800; color: var(--green);
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+    .drv-focus-eta {
+      font-size: 14px; font-weight: 800; color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+    .drv-focus-stop-name {
+      font-size: 21px; font-weight: 900; color: var(--text);
+      line-height: 1.25; letter-spacing: -0.3px;
+    }
+    .drv-focus-status-row { margin-top: 8px; }
+
+    /* GIANT Driver Advance Button */
+    .btn-drv-big-advance {
+      width: 100%; min-height: 60px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #000; border: none; border-radius: 16px; padding: 12px 18px; margin-bottom: 12px;
+      font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); transition: transform 0.1s, filter 0.1s;
+    }
+    .btn-drv-big-advance:active { transform: scale(0.98); filter: brightness(0.95); }
+    .btn-drv-big-advance.finished {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+    }
+    .drv-adv-content { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+    .drv-adv-sub { font-size: 10.5px; font-weight: 800; opacity: 0.85; letter-spacing: 0.6px; text-transform: uppercase; }
+    .drv-adv-title { font-size: 16px; font-weight: 800; margin-top: 2px; }
+    .drv-adv-arrow { font-size: 20px; font-weight: 800; }
+
+    /* Driver Action Grid */
+    .drv-action-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px;
+    }
+    .drv-action-btn {
+      border-radius: 14px; padding: 11px 6px; font-size: 12px; font-weight: 700;
+      border: 1px solid var(--border); cursor: pointer; text-align: center;
+      backdrop-filter: var(--glass-blur); transition: transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .drv-action-btn:active { transform: scale(0.97); }
+    .drv-btn-delay { background: var(--yellow-soft); color: var(--yellow); border-color: rgba(245, 158, 11, 0.3); }
+    .drv-btn-cancel { background: var(--red-soft); color: var(--red); border-color: rgba(244, 63, 94, 0.3); }
+    .drv-btn-reset { background: var(--surface); color: var(--text-secondary); border-color: var(--border); }
+
+    /* Stop Stepper */
+    .drv-stepper-card {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      border: 1.5px solid var(--border); border-radius: 18px; padding: 14px 16px;
+      margin-bottom: 12px; box-shadow: var(--shadow-card);
+    }
+    .drv-stepper-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      margin-bottom: 8px; cursor: pointer;
+    }
+    .drv-stepper-title {
+      font-size: 11.5px; font-weight: 700; color: var(--text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px;
+    }
+    .drv-stepper-hint { font-size: 11.5px; color: var(--accent); font-weight: 700; }
+    .drv-stepper { display: flex; flex-direction: column; gap: 0; }
+    .stepper-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 8px;
+      border-radius: 12px; cursor: pointer; transition: background 0.15s; position: relative;
+    }
+    .stepper-item:not(:last-child)::after {
+      content: ''; position: absolute; left: 21px; top: 38px; bottom: -12px;
+      width: 2px; background: rgba(255, 255, 255, 0.08); z-index: 1;
+    }
+    .stepper-item.passed:not(:last-child)::after { background: var(--green); }
+    .stepper-item:active { background: var(--surface-raised); }
+    .stepper-item.current {
+      background: rgba(16, 185, 129, 0.12); border: 1.5px solid var(--green);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
+    }
+
+    .stepper-icon-col {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: var(--text-secondary); flex-shrink: 0; z-index: 2;
+    }
+    .stepper-item.passed .stepper-icon-col { background: var(--green); border-color: var(--green); color: #000; }
+    .stepper-item.current .stepper-icon-col {
+      background: var(--green); border-color: var(--green); color: #000;
+      animation: pulseGreen 1.5s infinite;
+    }
+    @keyframes pulseGreen {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .stepper-info { flex: 1; min-width: 0; }
+    .stepper-name-row { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+    .stepper-stop-name { font-size: 14px; font-weight: 700; color: var(--text); }
+    .stepper-time { font-size: 13px; font-weight: 600; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+    .stepper-sub { font-size: 11px; color: var(--text-tertiary); margin-top: 1px; }
+
+    .stepper-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; margin-left: 6px; }
+    .sbadge-passed { background: var(--green-soft); color: var(--green); }
+    .sbadge-target { background: var(--green); color: #000; font-weight: 800; }
+
+    /* Passenger Preview */
+    .drv-preview-card {
+      background: rgba(28, 22, 18, 0.65); border: 1px dashed var(--border);
+      border-radius: 14px; padding: 10px 12px; margin-top: 6px; font-size: 12px;
+      color: var(--text-secondary); line-height: 1.4;
+    }
+    .drv-prev-title { font-weight: 700; color: var(--text-tertiary); margin-bottom: 4px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .drv-prev-content { color: var(--text); font-weight: 500; }
+
+    /* ── Direction Segmented Control (Apple Maps Style) ── */
+    .dir-segmented-control {
+      position: relative;
+      display: flex;
+      background: rgba(24, 19, 15, 0.88);
+      border: 1px solid rgba(255, 235, 220, 0.12);
+      border-radius: 16px;
+      padding: 4px;
+      margin-bottom: 14px;
+      gap: 4px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    .dir-segment-indicator {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 0;
+      width: calc(50% - 6px);
+      border-radius: 12px;
+      background: rgba(226, 147, 66, 0.18);
+      border: 1px solid rgba(226, 147, 66, 0.42);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 235, 220, 0.22);
+      pointer-events: none;
+      transition: transform 0.32s var(--f2-curve-spatial), width 0.25s var(--f2-curve-spatial);
+      z-index: 1;
+    }
+    .dir-seg-btn {
+      flex: 1;
+      position: relative;
+      z-index: 2;
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: var(--text-secondary);
+      transition: color var(--f2-duration-normal) var(--f2-curve-decelerate-mid), transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .dir-seg-btn:active {
+      transform: scale(0.97);
+    }
+    .dir-seg-btn.active {
+      color: #ffffff;
+    }
+    .dir-seg-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: -0.2px;
+    }
+    .dir-seg-sub {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+    .dir-seg-btn.active .dir-seg-sub {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Collapsible Route Picker ── */
+    .route-picker {
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .route-picker-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%;
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 14px; font-size: 13px; font-weight: 700;
+      color: var(--text-warm); cursor: pointer;
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+    }
+    .route-picker-toggle:active {
+      transform: scale(0.98);
+      background: var(--surface-raised);
+    }
+    .route-picker-toggle.open {
+      border-color: var(--accent);
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: transparent;
+    }
+    .route-picker-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .route-picker-arrow {
+      font-size: 12px; color: var(--text-tertiary);
+      transition: transform 0.25s var(--f2-curve-spatial);
+    }
+    .route-picker-toggle.open .route-picker-arrow {
+      transform: rotate(180deg);
+    }
+    .route-picker-dropdown {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--accent); border-top: none;
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+      animation: routeDropIn 0.2s var(--f2-curve-spatial);
+    }
+    @keyframes routeDropIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .route-pick-opt {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; background: transparent; border: none;
+      padding: 11px 14px; font-size: 13px; font-weight: 600;
+      color: var(--text-secondary); cursor: pointer;
+      transition: background var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+      text-align: left;
+    }
+    .route-pick-opt:active {
+      background: var(--surface-raised);
+    }
+    .route-pick-opt + .route-pick-opt {
+      border-top: 1px solid rgba(255, 235, 220, 0.06);
+    }
+    .route-pick-opt.active {
+      color: var(--accent); font-weight: 700;
+      background: var(--accent-soft);
+    }
+    .route-pick-check {
+      display: none; font-size: 14px; font-weight: 800; color: var(--accent);
+    }
+    .route-pick-opt.active .route-pick-check {
+      display: inline;
+    }
+    .filter-section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 6px; padding-left: 2px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .filter-section-label svg { opacity: 0.8; }
+
+    /* ── Stop Selector (Opal-Style Capsule Chips) ── */
+    .stop-section { margin-bottom: 14px; }
+    .stop-row {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;
+    }
+    .stop-row::-webkit-scrollbar { display: none; }
+    .stop-chip {
+      background: var(--surface); color: var(--text-secondary);
+      border: 1px solid var(--border); padding: 7px 14px;
+      border-radius: 9999px; font-size: 12px; font-weight: 600;
+      white-space: nowrap; cursor: pointer;
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+      display: flex; flex-direction: column; align-items: center; gap: 1px;
+      min-width: fit-content; backdrop-filter: var(--glass-blur);
+    }
+    .stop-chip:active {
+      transform: scale(0.96);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .stop-chip .stop-name { font-weight: 700; font-size: 12.5px; }
+    .stop-chip .stop-sub { font-size: 10px; color: var(--text-tertiary); font-weight: 500; }
+    .stop-chip.active {
+      background: var(--accent-soft); color: var(--accent);
+      border-color: var(--accent); font-weight: 700;
+      box-shadow: 0 2px 14px rgba(226, 147, 66, 0.25);
+    }
+    .stop-chip.active .stop-sub { color: var(--text-secondary); }
+
+    /* ── Next Bus Card (Transit / Flighty Hierarchy) ── */
+    .next-card {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 16px 16px 14px 16px; margin-bottom: 16px; position: relative;
+      box-shadow: var(--shadow-card);
+      background-image: radial-gradient(circle at 10% 10%, rgba(226, 147, 66, 0.07) 0%, transparent 65%);
+    }
+    .next-card-top-row {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+    }
+    .next-card-header {
+      font-size: 11px; font-weight: 800; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .hero-time-hero {
+      display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px;
+    }
+    .hero-rel-wrap {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    }
+    .hero-rel-val {
+      font-size: 34px; font-weight: 800; color: #ffffff;
+      letter-spacing: -1.2px; line-height: 1.05; font-variant-numeric: tabular-nums;
+    }
+    .hero-exact-row {
+      display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+    .hero-exact-clock {
+      font-weight: 700; color: var(--text-warm); font-variant-numeric: tabular-nums;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .hero-exact-stop {
+      font-size: 12px; color: var(--text-tertiary);
+    }
+
+    .countdown-badge {
+      font-size: 13px; font-weight: 800; padding: 5px 12px;
+      border-radius: 20px; line-height: 1; font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .cd-soon {
+      background: var(--green-soft); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3);
+      box-shadow: 0 0 14px rgba(16, 185, 129, 0.2);
+    }
+    .cd-urgent {
+      background: var(--red-soft); color: var(--red); border: 1px solid rgba(244, 63, 94, 0.3);
+      animation: pulseUrgent 1.5s infinite;
+    }
+    @keyframes pulseUrgent {
+      0% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.6); }
+      70% { box-shadow: 0 0 0 8px rgba(244, 63, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0); }
+    }
+    .cd-far {
+      background: rgba(255, 255, 255, 0.06); color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Departure Progress Bar ── */
+    .hero-progress-track {
+      width: 100%; height: 4px; background: rgba(255, 235, 220, 0.08);
+      border-radius: 9999px; overflow: hidden; margin: 10px 0 12px 0;
+    }
+    .hero-progress-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #2ec477, var(--accent));
+      border-radius: 9999px; transition: width 0.6s var(--f2-curve-spatial);
+    }
+    .hero-progress-fill.urgent {
+      background: linear-gradient(90deg, var(--yellow), var(--red));
+    }
+
+    /* Live status badge */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 700;
+      margin-bottom: 12px; width: fit-content;
+    }
+    .badge-driver-ok {
+      background: var(--green-soft); color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+    }
+    .badge-driver-cancel {
+      background: var(--red-soft); color: var(--red);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+    .badge-driver-delay {
+      background: var(--yellow-soft); color: var(--yellow);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .badge-seen {
+      background: var(--green-soft); color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-delayed {
+      background: var(--yellow-soft); color: var(--yellow);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .badge-missing {
+      background: var(--red-soft); color: var(--red);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    /* ── Live Route Stop-by-Stop Ladder ── */
+    .route-ladder-container {
+      background: rgba(28, 22, 18, 0.55); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 12px; margin: 10px 0 12px 0;
+    }
+    .ladder-header {
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; user-select: none;
+    }
+    .ladder-title {
+      font-size: 11.5px; font-weight: 700; color: var(--text-secondary);
+      display: inline-flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .ladder-expand-hint { font-size: 11px; color: var(--accent); font-weight: 600; }
+    .route-ladder {
+      display: flex; flex-direction: column; gap: 0; margin-top: 10px; padding-left: 6px;
+    }
+    .ladder-step {
+      display: flex; align-items: flex-start; gap: 12px; position: relative; padding-bottom: 12px;
+    }
+    .ladder-step:last-child { padding-bottom: 0; }
+    .ladder-spine {
+      display: flex; flex-direction: column; align-items: center; position: relative;
+      width: 16px; flex-shrink: 0;
+    }
+    .ladder-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--surface-raised); border: 2px solid var(--border);
+      z-index: 2; transition: all 0.2s ease;
+    }
+    .ladder-step.passed .ladder-dot {
+      background: #2ec477; border-color: #2ec477; box-shadow: 0 0 8px rgba(46, 196, 119, 0.4);
+    }
+    .ladder-step.current .ladder-dot {
+      background: #2ec477; border-color: #ffffff; box-shadow: 0 0 0 4px rgba(46, 196, 119, 0.25);
+      animation: ladderPulse 1.6s infinite;
+    }
+    @keyframes ladderPulse {
+      0% { box-shadow: 0 0 0 0 rgba(46, 196, 119, 0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(46, 196, 119, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(46, 196, 119, 0); }
+    }
+    .ladder-step.my-stop .ladder-dot {
+      border-color: var(--accent); background: var(--accent); box-shadow: 0 0 10px rgba(226, 147, 66, 0.45);
+    }
+    .ladder-line {
+      position: absolute; top: 12px; bottom: -4px; width: 2px;
+      background: rgba(255, 235, 220, 0.1); z-index: 1;
+    }
+    .ladder-step.passed .ladder-line { background: rgba(46, 196, 119, 0.6); }
+    .ladder-step:last-child .ladder-line { display: none; }
+    .ladder-info {
+      flex: 1; display: flex; justify-content: space-between; align-items: center; line-height: 1.2;
+    }
+    .ladder-name-wrap {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+    .ladder-name { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+    .ladder-step.passed .ladder-name { color: var(--text-tertiary); }
+    .ladder-step.current .ladder-name { color: #ffffff; font-weight: 700; }
+    .ladder-step.my-stop .ladder-name { color: var(--accent); font-weight: 800; }
+    .ladder-badge {
+      font-size: 9.5px; font-weight: 700; padding: 1.5px 6px; border-radius: 9999px;
+      background: rgba(226, 147, 66, 0.18); color: var(--accent); border: 1px solid rgba(226, 147, 66, 0.35);
+    }
+    .ladder-time {
+      font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--text-secondary);
+    }
+    .ladder-step.passed .ladder-time { color: var(--text-tertiary); }
+    .ladder-step.current .ladder-time { color: #2ec477; }
+    .ladder-step.my-stop .ladder-time { color: var(--accent); }
+
+    /* Action Buttons row (Status Report, Share, Calendar) */
+    .next-card-actions {
+      display: flex; gap: 6px; margin-top: 14px;
+    }
+    .card-act-btn {
+      flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 9px 8px; font-size: 12px;
+      font-weight: 700; cursor: pointer; display: inline-flex; align-items: center;
+      justify-content: center; gap: 5px; transition: all 0.15s;
+    }
+    .card-act-btn:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.1); }
+    .card-act-btn.highlight {
+      border-color: rgba(226, 147, 66, 0.4); color: var(--accent);
+      background: var(--accent-soft); box-shadow: 0 0 14px rgba(226, 147, 66, 0.18);
+    }
+
+    .my-report-notice {
+      display: none; background: rgba(255, 235, 220, 0.04); border: 1px dashed var(--border);
+      border-radius: 10px; padding: 8px 12px; margin-top: 10px; font-size: 12px;
+      color: var(--text-secondary); justify-content: space-between; align-items: center;
+    }
+    .my-report-notice.active { display: flex; }
+    .undo-btn {
+      background: none; border: none; color: var(--accent); font-size: 12px;
+      font-weight: 700; cursor: pointer; text-decoration: underline;
+    }
+
+    /* ── Upcoming Departures Micro-Feed ── */
+    .hero-upcoming-section {
+      margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border);
+    }
+    .hero-upcoming-title {
+      font-size: 10.5px; font-weight: 800; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 7px;
+    }
+    .hero-upcoming-chips {
+      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+    }
+    .hero-upcoming-chips::-webkit-scrollbar { display: none; }
+    .hero-up-chip {
+      background: rgba(255, 235, 220, 0.05); border: 1px solid var(--border);
+      border-radius: 12px; padding: 6px 10px; display: inline-flex; align-items: center;
+      gap: 7px; cursor: pointer; white-space: nowrap;
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+    }
+    .hero-up-chip:active {
+      transform: scale(0.96); background: rgba(255, 235, 220, 0.1);
+    }
+    .hero-up-time {
+      font-size: 13.5px; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums;
+    }
+    .hero-up-rel {
+      font-size: 11px; color: var(--accent); font-weight: 600;
+    }
+
+    /* ── Sheet Drag Handle ── */
+    .sheet-drag-handle-bar {
+      width: 100%; display: flex; justify-content: center; padding: 0 0 12px 0;
+      cursor: grab; touch-action: none;
+    }
+    .sheet-drag-handle {
+      width: 38px; height: 4.5px; border-radius: 9999px; background: rgba(255, 235, 220, 0.28);
+    }
+
+    /* ── Filter Chips ── */
+    .filters {
+      display: flex; gap: 6px; overflow-x: auto;
+      padding-bottom: 4px; margin-bottom: 0; scrollbar-width: none;
+    }
+    .filters::-webkit-scrollbar { display: none; }
+    .chip {
+      background: var(--surface); color: var(--text-secondary);
+      border: 1px solid var(--border); padding: 7px 14px;
+      border-radius: 9999px; font-size: 12.5px; font-weight: 600;
+      white-space: nowrap; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+    }
+    .chip:active {
+      transform: scale(0.96);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .chip.active {
+      background: var(--accent); color: #100c0a;
+      border-color: var(--accent); font-weight: 700;
+      box-shadow: 0 2px 14px rgba(226, 147, 66, 0.35);
+    }
+    .chip.active .route-badge-dot {
+      background: #100c0a !important;
+      box-shadow: none !important;
+    }
+
+    /* ── Past Trips Accordion ── */
+    .past-accordion { margin: 10px 0 14px; }
+    .past-accordion-btn {
+      width: 100%; background: rgba(28, 22, 18, 0.55); backdrop-filter: var(--glass-blur);
+      border: 1px dashed var(--border); border-radius: 12px; padding: 10px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; color: var(--text-secondary); font-size: 12.5px; font-weight: 600;
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+    }
+    .past-accordion-btn:active {
+      transform: scale(0.98);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+      background: rgba(255, 235, 220, 0.05);
+    }
+    .past-acc-badge {
+      background: rgba(255, 235, 220, 0.08); border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 10px; font-size: 11px; color: var(--text-secondary);
+    }
+    .past-accordion-content {
+      margin-top: 8px; display: flex; flex-direction: column; gap: 6px;
+    }
+
+    /* ── Driver Passed Stops Accordion ── */
+    .drv-passed-accordion {
+      background: rgba(46, 196, 119, 0.1); border: 1px dashed rgba(46, 196, 119, 0.35);
+      border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; display: flex;
+      justify-content: space-between; align-items: center; cursor: pointer;
+      font-size: 12px; font-weight: 700; color: var(--green);
+    }
+    .drv-passed-accordion:active { background: rgba(46, 196, 119, 0.18); }
+
+    /* ── Period Labels ── */
+    .period-label {
+      font-size: 11.5px; font-weight: 800; color: var(--text-tertiary);
+      text-transform: uppercase; letter-spacing: 0.6px; margin: 20px 0 8px 2px;
+    }
+
+    /* ── Bus List ── */
+    .bus-list { display: flex; flex-direction: column; gap: 6px; }
+    .bus-row {
+      background: var(--surface); backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max), background var(--f2-duration-normal) var(--f2-curve-decelerate-mid);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    .bus-row:active {
+      transform: scale(0.985);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .bus-row.past { opacity: 0.4; }
+    .bus-row.cancelled { opacity: 0.45; text-decoration: line-through; border-color: rgba(244, 63, 94, 0.3); }
+    .bus-row.current {
+      border-color: rgba(46, 196, 119, 0.6); background: rgba(46, 196, 119, 0.1);
+      box-shadow: 0 0 20px rgba(46, 196, 119, 0.18);
+    }
+    .bus-left { display: flex; align-items: center; gap: 12px; }
+    .bus-time-col { display: flex; flex-direction: column; }
+    .bus-time {
+      font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums;
+      color: var(--text); letter-spacing: -0.4px; line-height: 1.1;
+    }
+    .bus-time-delayed-wrap {
+      display: inline-flex; align-items: baseline; gap: 5px;
+    }
+    .bus-time-struck {
+      font-size: 14px; color: var(--text-tertiary); text-decoration: line-through;
+      font-variant-numeric: tabular-nums;
+    }
+    .bus-time-new {
+      font-size: 19px; font-weight: 800; color: var(--yellow);
+      font-variant-numeric: tabular-nums; letter-spacing: -0.4px; line-height: 1.1;
+    }
+    .bus-delay-tag {
+      font-size: 10px; font-weight: 700; color: var(--yellow); background: var(--yellow-soft);
+      border: 1px solid rgba(245, 158, 11, 0.3); padding: 1px 5px; border-radius: 6px; line-height: 1.2;
+    }
+    .bus-cancelled-tag {
+      font-size: 10.5px; font-weight: 800; color: var(--red); background: var(--red-soft);
+      border: 1px solid rgba(244, 63, 94, 0.3); padding: 1px 6px; border-radius: 6px; line-height: 1.2;
+      display: inline-block; margin-top: 2px;
+    }
+    .bus-subtime { font-size: 11.5px; color: var(--accent); font-weight: 600; margin-top: 1px; }
+    .bus-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .bus-route-name { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+
+    /* ── Route Pills (2026 Vibrant Micro-pills) ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px; border-radius: 9999px; font-size: 11.5px; font-weight: 700; line-height: 1.2;
+    }
+    .pill-sm { padding: 2.5px 8px; font-size: 11px; gap: 4px; }
+    .pill-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor; box-shadow: 0 0 6px currentColor;
+      flex-shrink: 0; display: inline-block;
+    }
+    .pill-pidg { background: rgba(46, 196, 119, 0.15); color: #2ec477; border: 1px solid rgba(46, 196, 119, 0.3); }
+    .pill-drag { background: rgba(91, 139, 247, 0.15); color: #5b8bf7; border: 1px solid rgba(91, 139, 247, 0.3); }
+    .pill-zab  { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .pill-dom  { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); }
+
+    /* ── Bottom Bar (Opal & Uber-Style Floating Capsule Dock with Apple-Style Indicator) ── */
+    .bottom-bar {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 12px) + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 390px;
+      margin: 0 auto;
+      background: rgba(22, 17, 14, 0.88);
+      backdrop-filter: blur(28px) saturate(210%);
+      -webkit-backdrop-filter: blur(28px) saturate(210%);
+      border: 1px solid rgba(255, 235, 220, 0.12);
+      border-radius: 9999px;
+      padding: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 3px;
+      z-index: 1000;
+      box-shadow: 0 20px 48px -8px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 235, 220, 0.15);
+    }
+
+    /* Apple-style Fluid Spring Indicator */
+    .dock-indicator {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      left: 0;
+      width: 0;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      pointer-events: none;
+      transition: transform 0.35s var(--f2-curve-spatial), width 0.28s var(--f2-curve-spatial);
+      z-index: 1;
+    }
+
+    .bar-btn {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      color: rgba(245, 235, 225, 0.52);
+      border: none;
+      border-radius: 9999px;
+      padding: 7px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color var(--f2-duration-normal) var(--f2-curve-decelerate-mid), transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+      position: relative;
+      z-index: 2;
+    }
+    .bar-btn svg {
+      transition: transform var(--f2-duration-gentle) var(--f2-curve-spatial), stroke var(--f2-duration-normal) ease;
+      stroke-width: 2.1;
+      display: block;
+      color: currentColor;
+    }
+    .bar-btn:active {
+      transform: scale(0.93);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .bar-btn.active {
+      color: #ffffff;
+      font-weight: 700;
+    }
+    .bar-btn.active svg {
+      stroke: #ffffff;
+      transform: translateY(-1px) scale(1.06);
+      filter: drop-shadow(0 2px 6px rgba(255, 255, 255, 0.25));
+    }
+
+    /* Modal Cache Box */
+    .info-cache-box {
+      margin-top: 18px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .info-cache-text strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 700;
+    }
+    .info-cache-text p {
+      font-size: 11.5px !important;
+      color: var(--text-tertiary) !important;
+      margin: 2px 0 0 0 !important;
+      line-height: 1.3 !important;
+    }
+    .btn-clear-cache {
+      background: rgba(244, 63, 94, 0.12);
+      color: var(--red);
+      border: 1px solid rgba(244, 63, 94, 0.25);
+      border-radius: 9999px;
+      padding: 7px 14px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .btn-clear-cache:active {
+      transform: scale(0.96);
+      background: rgba(244, 63, 94, 0.2);
+    }
+
+    /* ── Modals ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72); backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 900; align-items: flex-end; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-sheet {
+      background: var(--surface-solid); border-top: 1px solid rgba(255, 235, 220, 0.15);
+      border-left: 1px solid rgba(255, 235, 220, 0.08);
+      border-right: 1px solid rgba(255, 235, 220, 0.08);
+      border-radius: 28px 28px 0 0;
+      padding: 22px 20px calc(env(safe-area-inset-bottom, 20px) + 90px);
+      max-width: 480px; width: 100%; max-height: 85vh; overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.75);
+      animation: sheetSlideUp var(--f2-duration-gentle) var(--f2-curve-spatial) forwards;
+    }
+    @keyframes sheetSlideUp {
+      from { transform: translateY(28px); opacity: 0.6; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .modal-top h3 { font-size: 17px; font-weight: 800; letter-spacing: -0.2px; }
+    .modal-x {
+      background: rgba(255, 255, 255, 0.08); border: none; color: var(--text-secondary);
+      width: 30px; height: 30px; border-radius: 50%; font-size: 14px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .modal-x:active { background: rgba(255, 255, 255, 0.15); }
+    .modal-body p { font-size: 13.5px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5; }
+    .modal-body ul { margin-left: 18px; margin-bottom: 14px; color: var(--text-secondary); font-size: 13px; }
+    .modal-body li { margin-bottom: 6px; }
+    .modal-body strong { color: var(--text); }
+
+    /* Report modal options */
+    .report-options { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+    .report-opt-btn {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 12px 14px; text-align: left; cursor: pointer;
+      display: flex; align-items: center; gap: 12px; transition: all 0.15s;
+    }
+    .report-opt-btn:active { transform: scale(0.98); background: rgba(255, 255, 255, 0.05); }
+    .report-opt-title { font-size: 14.5px; font-weight: 700; color: var(--text); }
+    .report-opt-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+    .driver-pin-input {
+      width: 100%; background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--border);
+      border-radius: 12px; color: var(--text); padding: 12px; font-size: 20px;
+      text-align: center; letter-spacing: 6px; margin-bottom: 14px; font-weight: 800;
+    }
+    .driver-pin-input:focus { outline: none; border-color: var(--accent); }
+    .btn-submit {
+      width: 100%; background: var(--accent); color: #100c0a; border: none;
+      border-radius: 12px; padding: 14px; font-weight: 800; font-size: 15px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(226, 147, 66, 0.35); transition: transform 0.1s;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+
+    /* ── PWA Installation Modal Styles ── */
+    .btn-pwa-install {
+      width: 100%;
+      background: var(--accent);
+      color: #100c0a;
+      border: none;
+      border-radius: 9999px;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 18px rgba(226, 147, 66, 0.35);
+      transition: all var(--f2-duration-fast) var(--f2-curve-decelerate-mid);
+    }
+    .btn-pwa-install:active {
+      transform: scale(0.97);
+      transition: transform var(--f2-duration-fast) var(--f2-curve-easy-ease-max);
+    }
+    .install-link-box {
+      background: rgba(28, 22, 18, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .install-link-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .install-link-input {
+      flex: 1;
+      min-width: 0;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text-warm);
+      font-family: inherit;
+    }
+    .btn-copy-link {
+      background: rgba(226, 147, 66, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(226, 147, 66, 0.35);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all var(--f2-duration-fast);
+    }
+    .btn-copy-link:active {
+      transform: scale(0.96);
+      background: rgba(226, 147, 66, 0.25);
+    }
+    .install-steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .install-step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .step-card-title {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-warm);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .step-card-title svg {
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-list {
+      padding-left: 18px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      margin: 0;
+    }
+    .step-list li {
+      margin-bottom: 4px;
+    }
+
+    /* ── Floating Install Popup / Toast (Native Glassmorphism) ── */
+    .pwa-toast-popup {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 20px) + 76px);
+      left: 14px;
+      right: 14px;
+      max-width: 440px;
+      margin: 0 auto;
+      background: rgba(26, 20, 16, 0.94);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(226, 147, 66, 0.38);
+      border-radius: 18px;
+      padding: 13px 14px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 20px rgba(226, 147, 66, 0.18);
+      z-index: 990;
+      display: none;
+      transform: translateY(24px) scale(0.97);
+      opacity: 0;
+      transition: transform 0.35s var(--f2-curve-spatial), opacity 0.35s var(--f2-curve-spatial);
+    }
+    .pwa-toast-popup.visible {
+      display: block;
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    .pwa-toast-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pwa-toast-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(226, 147, 66, 0.15);
+      border: 1px solid rgba(226, 147, 66, 0.35);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pwa-toast-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .pwa-toast-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+    .pwa-toast-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+    }
+    .pwa-toast-close {
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 15px;
+      cursor: pointer;
+      padding: 2px 6px;
+      line-height: 1;
+      border-radius: 6px;
+      transition: color 0.15s;
+    }
+    .pwa-toast-close:active {
+      color: #ffffff;
+    }
+    .pwa-toast-desc {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.35;
+      margin-bottom: 9px;
+    }
+    .pwa-toast-desc b {
+      color: var(--accent);
+    }
+    .pwa-toast-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pwa-toast-btn-primary {
+      background: var(--accent);
+      color: #100c0a;
+      border: none;
+      border-radius: 9999px;
+      padding: 7px 13px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px rgba(226, 147, 66, 0.3);
+      transition: transform 0.15s;
+    }
+    .pwa-toast-btn-primary:active {
+      transform: scale(0.96);
+    }
+    .pwa-toast-btn-secondary {
+      background: rgba(255, 235, 220, 0.08);
+      color: var(--text-warm);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s;
+    }
+    .pwa-toast-btn-secondary:active {
+      background: rgba(255, 235, 220, 0.16);
+    }
+
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    /* Calm, native-inspired passenger interface. */
+    :root {
+      color-scheme: light;
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-solid: #ffffff;
+      --surface-raised: #eeefef;
+      --surface-highlight: rgba(36, 46, 58, 0.04);
+      --border: rgba(36, 46, 58, 0.08);
+      --border-light: rgba(36, 46, 58, 0.14);
+      --border-focus: rgba(64, 104, 148, 0.55);
+      --accent: #406894;
+      --accent-soft: #eaf0f6;
+      --accent-glow: transparent;
+      --text: #292c32;
+      --text-warm: #292c32;
+      --text-secondary: #61666e;
+      --text-tertiary: #727780;
+      --green: #24734d;
+      --green-soft: #e8f3eb;
+      --blue: #406894;
+      --blue-soft: #eaf0f6;
+      --yellow: #916315;
+      --yellow-soft: #fbf1dd;
+      --gold: #916315;
+      --gold-soft: #fbf1dd;
+      --purple: #795496;
+      --purple-soft: #f1eaf5;
+      --red: #b4444c;
+      --red-soft: #fbecef;
+      --shadow-card: 0 4px 20px rgba(39, 45, 52, 0.045);
+      --shadow-glow: none;
+    }
+    body {
+      background-image: radial-gradient(ellipse at 50% 0%, rgba(140, 160, 190, 0.045), transparent 55%);
+      padding-top: max(env(safe-area-inset-top), 8px);
+    }
+    button, input, select { font-family: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 3px;
+    }
+    .weather-bar {
+      background: transparent; border: 0; box-shadow: none;
+      padding: 6px 2px; margin-bottom: 14px; backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    header { padding-bottom: 20px; gap: 12px; }
+    .brand-icon { background: var(--accent-soft); border: 0; border-radius: 12px; }
+    .title-group h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.6px; }
+    .title-group p { font-size: 12px; font-weight: 400; }
+    .clock { background: transparent; border: 0; padding: 6px 0 6px 8px; font-weight: 500; font-size: 12px; }
+    .clock-dot, .route-badge-dot, .pill-dot { box-shadow: none; }
+    .dir-segmented-control {
+      background: #e9e9e6; border-color: transparent; box-shadow: none;
+      border-radius: 15px; margin-bottom: 16px;
+    }
+    .dir-segment-indicator {
+      background: #ffffff; border-color: rgba(36, 46, 58, 0.04);
+      box-shadow: 0 2px 5px rgba(39, 45, 52, 0.07); border-radius: 11px;
+    }
+    .dir-seg-btn { min-height: 48px; }
+    .dir-seg-title { font-weight: 600; }
+    .dir-seg-btn.active .dir-seg-sub { color: var(--text-secondary); font-weight: 400; }
+    .route-picker { margin-bottom: 12px; }
+    .route-picker-toggle {
+      min-height: 48px; border-color: transparent; border-radius: 14px;
+      padding: 12px 16px; font-size: 14px; font-weight: 500;
+    }
+    .route-picker-toggle.open { border-color: transparent; background: var(--surface); }
+    .route-picker-arrow { color: var(--text-secondary); }
+    .route-picker-dropdown {
+      background: var(--surface-solid); border: 0; padding: 4px 8px 8px;
+      border-radius: 0 0 14px 14px;
+    }
+    .route-pick-opt {
+      min-height: 48px; padding: 12px 10px; gap: 12px;
+      font-size: 15px; font-weight: 400; border-radius: 9px; color: var(--text);
+    }
+    .route-pick-opt + .route-pick-opt { border-top: 0; }
+    .route-pick-opt.active { font-weight: 500; background: var(--accent-soft); color: var(--text); }
+    .route-pick-opt.active::after { content: '\2713'; margin-left: auto; color: var(--accent); font-weight: 600; }
+    .route-pick-opt .route-pick-check { display: none; }
+    .route-pick-opt[data-filter="all"]::before { content: ''; width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: var(--text-secondary); }
+    .stop-row { gap: 8px; padding-bottom: 6px; }
+    .stop-chip { min-height: 48px; padding: 8px 14px; border-radius: 14px; border-color: transparent; }
+    .stop-chip .stop-name { font-weight: 600; font-size: 13px; }
+    .stop-chip .stop-sub { font-size: 11px; }
+    .stop-chip.active { border-color: rgba(120, 181, 255, 0.3); background: var(--accent-soft); box-shadow: none; }
+    .next-card { padding: 20px; background-image: none; border-color: transparent; border-radius: 24px; margin-top: 4px; }
+    .next-card-top-row { gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .next-card-header { font-size: 12px; text-transform: none; letter-spacing: 0; font-weight: 500; color: var(--text-secondary); }
+    .hero-rel-wrap { flex-wrap: wrap; align-items: center; }
+    .hero-rel-val { font-size: clamp(30px, 8.7vw, 40px); font-weight: 650; letter-spacing: -1.5px; line-height: 1.15; }
+    .hero-time-hero { gap: 8px; }
+    .hero-exact-clock { font-weight: 500; }
+    .hero-exact-stop { color: var(--text-secondary); }
+    .countdown-badge { font-weight: 500; font-size: 12px; padding: 6px 10px; border: 0; box-shadow: none; }
+    .cd-urgent { animation: none; }
+    .hero-progress-track { height: 3px; background: #e9ecef; margin: 18px 0 16px; }
+    .hero-progress-fill { background: var(--accent); }
+    .hero-progress-fill.urgent { background: var(--yellow); }
+    .route-ladder-container { background: transparent; border: 0; border-top: 1px solid var(--border); border-radius: 0; padding: 0; margin: 0; }
+    .ladder-header { min-height: 48px; gap: 8px; }
+    .ladder-title { font-size: 12px; font-weight: 500; text-transform: none; letter-spacing: 0; }
+    .ladder-expand-hint { font-size: 11px; white-space: nowrap; font-weight: 400; }
+    .next-card-actions { margin-top: 8px; gap: 8px; }
+    .card-act-btn { min-height: 44px; min-width: 44px; border: 0; border-radius: 12px; font-size: 13px; font-weight: 500; }
+    .card-act-btn.highlight { background: var(--accent-soft); box-shadow: none; }
+    .past-accordion-btn { min-height: 48px; background: transparent; border: 0; padding: 10px 2px; box-shadow: none; }
+    .past-acc-badge { border: 0; background: var(--surface-raised); }
+    .period-label { font-weight: 500; font-size: 12px; letter-spacing: 0.4px; margin-top: 22px; margin-left: 12px; }
+    .bus-list { gap: 1px; background: var(--border); border-radius: 18px; overflow: hidden; }
+    .bus-list > .bus-row { border-radius: 0; }
+    .bus-row { min-height: 70px; padding: 14px; border: 0; box-shadow: none; background: var(--surface-solid); }
+    .bus-row.current { background: #edf5ee; box-shadow: inset 3px 0 0 var(--green); }
+    .bus-time { font-size: 21px; font-weight: 600; }
+    .bus-subtime { color: var(--text-secondary); font-weight: 400; margin-top: 4px; }
+    .bus-left { gap: 10px; min-width: 0; }
+    .bus-right { margin-left: 8px; }
+    .bus-route-name { font-weight: 400; overflow-wrap: anywhere; }
+    .pill { border-color: transparent; font-weight: 500; }
+    .bottom-bar { background: rgba(255, 255, 255, 0.92); border-color: rgba(36, 46, 58, 0.08); box-shadow: 0 6px 24px rgba(39, 45, 52, 0.10); }
+    .dock-indicator { background: var(--accent-soft); border: 0; box-shadow: none; }
+    .bar-btn { color: var(--text-tertiary); min-height: 48px; font-weight: 500; }
+    .bar-btn.active { color: var(--accent); }
+    .modal-sheet { background: var(--surface-solid); border-color: var(--border); box-shadow: var(--shadow-card); }
+    .title-group h1, .hero-rel-val, .dir-seg-btn.active,
+    .ladder-step.current .ladder-name { color: var(--text); }
+    .card-act-btn { background: var(--surface-raised); }
+    .card-act-btn:active { background: #e3e8ed; }
+    .cd-far, .past-acc-badge, .hero-up-chip { background: var(--surface-raised); }
+    .pill-pidg { background: var(--green-soft); color: var(--green); }
+    .pill-drag { background: var(--blue-soft); color: var(--blue); }
+    .pill-zab { background: var(--yellow-soft); color: var(--yellow); }
+    .pill-dom { background: var(--purple-soft); color: var(--purple); }
+    .dot-pidg, .clock-dot { background: var(--green); color: var(--green); }
+    .dot-drag { background: var(--blue); color: var(--blue); }
+    .dot-zab { background: var(--yellow); color: var(--yellow); }
+    .dot-dom { background: var(--purple); color: var(--purple); }
+    .badge-driver-ok { box-shadow: none; }
+    .ladder-line { background: #dfe4e8; }
+    .ladder-step.current .ladder-time { color: var(--green); }
+    .ladder-badge { background: var(--accent-soft); border-color: var(--border); }
+    .sheet-drag-handle { background: #c7c9cd; }
+    .modal-x { background: var(--surface-raised); color: var(--text-secondary); }
+    .report-opt-btn, .driver-pin-input { background: var(--surface); color: var(--text); }
+    .driver-mode-bar, .drv-active-trip-bar, .drv-picker-drawer {
+      background: var(--surface); border-color: var(--border); box-shadow: var(--shadow-card);
+    }
+    .drv-dir-btn.active, .drv-route-card.active { background: var(--accent-soft); box-shadow: none; border-color: var(--border-focus); }
+    /* Compact transit layout: keep departures visible above the dock. */
+    body { background-color: #f2f3f5; background-image: none; }
+    .weather-bar { margin-bottom: 8px; padding: 3px 2px; }
+    header { padding-bottom: 14px; }
+    .brand-icon { width: 32px; height: 32px; border-radius: 9px; }
+    .title-group h1 { font-size: 20px; }
+    .dir-segmented-control { border-radius: 12px; margin-bottom: 10px; padding: 3px; background: #e4e6e9; }
+    .dir-segment-indicator { top: 3px; bottom: 3px; border-radius: 9px; }
+    .dir-seg-btn { min-height: 44px; padding: 7px 6px; }
+    .route-picker { margin-bottom: 8px; }
+    .route-picker-toggle { min-height: 44px; border-radius: 10px; padding: 10px 12px; background: transparent; border-color: #d9dde2; }
+    .route-picker-dropdown { border-radius: 0 0 10px 10px; }
+    .stop-row { gap: 6px; padding-bottom: 2px; }
+    .stop-chip { min-height: 44px; border-radius: 9px; padding: 6px 11px; background: transparent; border-color: #d9dde2; }
+    .stop-chip.active { background: #e2eaf3; border-color: #9db3cc; }
+    .stop-chip .stop-name { font-size: 12px; }
+    .stop-chip .stop-sub { font-size: 10px; font-weight: 400; }
+    .next-card { padding: 16px; margin-top: 0; margin-bottom: 10px; border-radius: 16px; box-shadow: 0 2px 8px rgba(39, 45, 52, 0.025); }
+    .next-card-top-row { margin-bottom: 10px; }
+    .next-card-header { font-size: 10px; font-weight: 600; letter-spacing: 0.4px; }
+    .hero-rel-val { font-size: clamp(28px, 8vw, 34px); letter-spacing: -1px; }
+    .hero-time-hero { gap: 5px; }
+    .hero-progress-track { margin: 12px 0 6px; height: 2px; }
+    .route-ladder-container { border-top: 0; }
+    .ladder-header { min-height: 44px; }
+    .next-card-actions { margin-top: 2px; }
+    .card-act-btn { border-radius: 9px; }
+    .card-act-btn.highlight { background: #edf2f7; color: #365e87; }
+    .past-accordion { margin: 0 0 6px; }
+    .past-accordion-btn { min-height: 44px; border-radius: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .period-label { margin: 12px 0 6px 2px; font-size: 11px; }
+    .bus-list { border-radius: 12px; }
+    .bus-row { min-height: 62px; padding: 10px 12px; }
+    .bus-row.current { background: #f5f9f6; box-shadow: inset 2px 0 0 #4a8260; }
+    .bus-time { font-size: 20px; }
+    .bus-subtime { margin-top: 3px; font-size: 11px; }
+    .bottom-bar { border-radius: 20px; padding: 4px; box-shadow: 0 3px 14px rgba(39, 45, 52, 0.08); }
+    .dock-indicator { top: 4px; bottom: 4px; border-radius: 15px; background: #edf2f7; }
+    .bar-btn { min-height: 44px; padding: 5px 4px; border-radius: 15px; }
+    .bottom-bar .bar-btn.active, .bottom-bar .bar-btn.active svg { color: #365e87; }
+    .bottom-bar .bar-btn.active svg { stroke: currentColor; filter: none; }
+    /* Matte charcoal, restrained champagne accents, distinct surface levels. */
+    :root {
+      color-scheme: dark;
+      --bg: #141414;
+      --surface: #222221;
+      --surface-solid: #222221;
+      --surface-raised: #30302e;
+      --surface-highlight: rgba(235, 230, 218, 0.05);
+      --border: #363633;
+      --border-light: #4a4944;
+      --border-focus: #aa9c80;
+      --accent: #cfbea0;
+      --accent-soft: #343129;
+      --accent-glow: transparent;
+      --text: #f2f0eb;
+      --text-warm: #f2f0eb;
+      --text-secondary: #b8b6af;
+      --text-tertiary: #96958e;
+      --green: #9abd9f;
+      --green-soft: #29372d;
+      --blue: #a0b4ca;
+      --blue-soft: #2a333e;
+      --yellow: #d2b27b;
+      --yellow-soft: #3b3224;
+      --gold: #d2b27b;
+      --gold-soft: #3b3224;
+      --purple: #bba7cb;
+      --purple-soft: #352d3e;
+      --red: #dba3a0;
+      --red-soft: #402c2c;
+      --shadow-card: 0 5px 16px rgba(0, 0, 0, 0.12);
+      --shadow-glow: none;
+    }
+    body { background: var(--bg); }
+    .brand-icon { background: #2c2a25; color: var(--accent); }
+    .dir-segmented-control { background: #1b1b1a; border-color: #363633; }
+    .dir-segment-indicator { background: #393833; border-color: #555147; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); }
+    .dir-seg-btn.active { color: var(--text); }
+    .dir-seg-btn.active .dir-seg-sub { color: #c6c1b5; }
+    .route-picker-toggle { background: #222221; border-color: #3d3c38; color: var(--text); }
+    .route-picker-toggle.open { background: #282826; border-color: #4a4740; }
+    .route-picker-dropdown { background: #282826; }
+    .route-pick-opt.active { background: #39352d; }
+    .stop-chip { background: #1b1b1a; border-color: #383834; }
+    .stop-chip.active { background: #373228; border-color: #8e7e62; color: #e3d4b7; }
+    .stop-chip.active .stop-sub { color: #c8beaa; }
+    .next-card {
+      background: #272725; border: 1px solid #42413b;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+    }
+    .next-card-header { color: #bab7ae; }
+    .hero-rel-val { color: #f7f5ef; font-weight: 600; }
+    .hero-progress-track { background: #41403a; }
+    .hero-progress-fill { background: #b9aa8b; }
+    .hero-progress-fill.urgent { background: #c3a477; }
+    .route-ladder-container { border-top: 1px solid #3b3b35; margin-top: 10px; }
+    .ladder-line { background: #494942; }
+    .card-act-btn { background: #343430; border: 1px solid #46453e; color: var(--text); }
+    .card-act-btn.highlight { background: #3a352b; border-color: #655a46; color: #e0cfad; }
+    .card-act-btn:active { background: #484336; }
+    .past-accordion-btn { color: #aaa79e; }
+    .past-acc-badge { background: #2b2b28; color: #b8b6af; }
+    .period-label { color: #aaa79e; }
+    .bus-list { gap: 6px; background: transparent; border-radius: 0; overflow: visible; }
+    .bus-list > .bus-row, .bus-row { border-radius: 12px; border: 1px solid #343430; background: #222221; }
+    .bus-row.current { background: #2b3029; border-color: #505b49; box-shadow: inset 2px 0 0 #9aa88a; }
+    .bus-row.cancelled { border-color: #75514e; }
+    .bus-time { color: #f2f0eb; }
+    .bus-subtime { color: #a9a79f; }
+    .bus-route-name { color: #c6c3ba; }
+    .bottom-bar { background: rgba(33, 33, 31, 0.97); border-color: #44433d; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.32); }
+    .dock-indicator { background: #3b3932; border: 1px solid #565044; }
+    .bottom-bar .bar-btn.active, .bottom-bar .bar-btn.active svg { color: #e0cfad; }
+    .bar-btn { color: #a3a198; }
+    .sheet-drag-handle { background: #66645b; }
+    .modal-x { background: #353530; color: #c6c3ba; }
+    .modal-sheet { background: #222221; }
+    .route-badge-dot, .pill-dot, .clock-dot { box-shadow: none; }
+    .route-multi-hint { padding: 8px 10px; font-size: 12px; color: var(--text-secondary); }
+    .route-picker-done { width: 100%; min-height: 44px; margin-top: 6px; border: 1px solid var(--border-light); border-radius: 9px; background: var(--accent-soft); color: var(--accent); font-size: 14px; cursor: pointer; }
+    .route-picker-label { text-align: left; flex-wrap: wrap; }
+    .route-picker-arrow { margin-left: 12px; flex-shrink: 0; }
+    .direction-question { margin: 0 0 8px 2px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+    .dir-seg-title svg { display: none; }
+    .dir-seg-btn.active .dir-seg-title::before { content: '\2713'; color: var(--accent); font-size: 13px; }
+    .dir-seg-title { font-size: 14px; }
+    .dir-seg-sub { font-size: 12px; }
+    .schedule-direction { margin: 10px 0 8px; padding: 10px 12px; border-left: 2px solid var(--accent); color: var(--text); font-size: 14px; font-weight: 600; }
+    @media (max-width: 360px) {
+      body { padding-left: 12px; padding-right: 12px; }
+      .next-card { padding: 16px; }
+      .title-group h1 { font-size: 19px; }
+      .brand-title { gap: 8px; }
+      .clock { font-size: 11px; }
+      .bus-left { gap: 6px; }
+      .bus-row { padding: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+    }
+  </style>
+<style>
+.recovery-notice { padding:12px 14px; margin:0 0 16px; border:1px solid var(--border); border-radius:14px; color:var(--text-secondary); font-size:12px; line-height:1.55; }
+.recovery-notice strong { color:var(--text-primary); }
+#tab-nav-driver, .btn-driver-entry, #driver-mode-bar, #driver-view,
+button[onclick*="report-modal"], #my-report-notice { display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Weather Bar -->
+  <div class="weather-bar" id="weather-bar">
+    <div class="weather-left">
+      <span id="weather-icon" style="display:inline-flex;align-items:center;color:var(--accent);">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      </span>
+      <span id="weather-desc">Завантаження погоди...</span>
+    </div>
+    <div class="weather-temp" id="weather-temp">--°C</div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand-title">
+      <span class="brand-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="15" rx="3"></rect>
+          <circle cx="7.5" cy="18" r="1.5"></circle>
+          <circle cx="16.5" cy="18" r="1.5"></circle>
+          <path d="M3 10h18"></path>
+          <path d="M7 6h.01"></path>
+          <path d="M17 6h.01"></path>
+        </svg>
+      </span>
+      <div class="title-group">
+        <h1 id="brand-title-h1">Автобуси ОТГ</h1>
+        <p id="header-sub">Розклад приміських автобусів</p>
+      </div>
+    </div>
+    <div class="clock"><span class="clock-dot"></span><span id="live-clock">--:--</span></div>
+  </header>
+
+  <!-- Driver Top Bar (Only visible if isDriverMode) -->
+  <div class="driver-mode-bar" id="driver-mode-bar" style="display:none;">
+    <div class="drv-switch-pills">
+      <button class="drv-switch-btn active" id="btn-switch-cockpit" onclick="switchDriverView('cockpit')">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.93" y1="16.5" x2="9.5" y2="13.5"></line><line x1="19.07" y1="16.5" x2="14.5" y2="13.5"></line></svg>
+        <span>Пульт водія</span>
+      </button>
+      <button class="drv-switch-btn" id="btn-switch-passenger" onclick="switchDriverView('passenger')">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        <span>Вигляд пасажира</span>
+      </button>
+    </div>
+    <button class="drv-exit-btn" onclick="exitDriverMode()">Вийти ✕</button>
+  </div>
+
+  <!-- Banner shown if driver is previewing passenger view -->
+  <div class="driver-passenger-notice" id="driver-passenger-notice" style="display:none;">
+    <span>Ви у режимі перегляду пасажира</span>
+    <button class="drv-back-btn" onclick="switchDriverView('cockpit')">У Пульт ➔</button>
+  </div>
+
+  <!-- ══════════ FULL DEDICATED DRIVER COCKPIT ══════════ -->
+  <div id="driver-cockpit-view" style="display:none;">
+
+    <!-- Active Trip Compact Bar (Progressive Summary) -->
+    <div class="drv-active-trip-bar" id="drv-active-trip-bar">
+      <div class="drv-atb-left">
+        <span class="drv-atb-time" id="drv-atb-time">13:45</span>
+        <div class="drv-atb-meta">
+          <span class="drv-atb-route" id="drv-atb-route">Підгородне</span>
+          <span class="drv-atb-dir" id="drv-atb-dir">АС-2 → Підгородне</span>
+        </div>
+      </div>
+      <button class="drv-atb-btn" id="btn-toggle-trip-picker" onclick="toggleDriverTripPicker()">
+        <span id="drv-picker-btn-text">Змінити рейс ▾</span>
+      </button>
+    </div>
+
+    <!-- Collapsible Route & Trip Picker Drawer -->
+    <div class="drv-picker-drawer" id="drv-picker-drawer" style="display:none;">
+      <!-- Route Selection -->
+      <div class="drv-section-title">
+        <span>Маршрут:</span>
+      </div>
+      <div class="drv-route-grid" id="drv-route-grid">
+        <button class="drv-route-card active" id="drv-r-pidg" onclick="setDriverRoute('pidg')">
+          <span class="route-badge-dot dot-pidg"></span>
+          <span class="drv-r-name">Підгородне</span>
+        </button>
+        <button class="drv-route-card" id="drv-r-drag" onclick="setDriverRoute('drag')">
+          <span class="route-badge-dot dot-drag"></span>
+          <span class="drv-r-name">Драганівка</span>
+        </button>
+        <button class="drv-route-card" id="drv-r-zab" onclick="setDriverRoute('zab')">
+          <span class="route-badge-dot dot-zab"></span>
+          <span class="drv-r-name">Забойки</span>
+        </button>
+        <button class="drv-route-card" id="drv-r-dom" onclick="setDriverRoute('dom')">
+          <span class="route-badge-dot dot-dom"></span>
+          <span class="drv-r-name">Домаморич</span>
+        </button>
+      </div>
+
+      <!-- Direction Selector (Apple/Uber Segmented Style) -->
+      <div class="drv-dir-segmented" role="tablist" aria-label="Напрямок водія">
+        <button class="drv-dir-btn active" id="btn-drv-dir-to-pidg" onclick="setDriverDirection('to-pidg')">
+          <span>З Тернополя (АС-2 → Село)</span>
+        </button>
+        <button class="drv-dir-btn" id="btn-drv-dir-to-tern" onclick="setDriverDirection('to-tern')">
+          <span>До Тернополя (Село → АС-2)</span>
+        </button>
+      </div>
+
+      <!-- Trip Picker Strip -->
+      <div class="drv-section-title">
+        <span>Рейси на сьогодні:</span>
+        <span id="drv-trips-count" style="font-size:11.5px;color:var(--text-tertiary);"></span>
+      </div>
+      <div class="drv-trip-strip" id="drv-trip-strip">
+        <!-- Generated time chips for selected route & dir -->
+      </div>
+    </div>
+
+    <!-- TARGET STOP HERO FOCUS CARD -->
+    <div class="drv-focus-hero" id="drv-focus-hero">
+      <div class="drv-focus-label-row">
+        <span class="drv-focus-label">НАСТУПНА ЗУПИНКА:</span>
+        <span class="drv-focus-eta" id="drv-focus-eta">~13:45</span>
+      </div>
+      <div class="drv-focus-stop-name" id="drv-focus-stop-name">АС-2 (вул. Білогірська)</div>
+      <div class="drv-focus-status-row" id="drv-trip-status-row"></div>
+    </div>
+
+    <!-- GIANT Advance Button -->
+    <button class="btn-drv-big-advance" id="btn-drv-advance" onclick="drvAdvanceCurrentStop()">
+      <div class="drv-adv-content">
+        <span class="drv-adv-sub" id="drv-adv-sub">ПРОЇХАЛИ ЗУПИНКУ?</span>
+        <span class="drv-adv-title" id="drv-adv-title">Відзначити зупинку</span>
+      </div>
+      <span class="drv-adv-arrow">➔</span>
+    </button>
+
+    <!-- Quick Action Pills (Delay, Cancel, Reset) -->
+    <div class="drv-action-grid">
+      <button class="drv-action-btn drv-btn-delay" onclick="submitDriverTripStatus('delayed_10')">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <span>+5–10 хв</span>
+      </button>
+      <button class="drv-action-btn drv-btn-cancel" onclick="submitDriverTripStatus('cancelled')">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+        <span>Скасувати</span>
+      </button>
+      <button class="drv-action-btn drv-btn-reset" onclick="resetDriverTripStops()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+        <span>Скинути</span>
+      </button>
+    </div>
+
+    <!-- Road Stepper (Дорога по зупинках) -->
+    <div class="drv-stepper-card">
+      <div class="drv-stepper-header" onclick="toggleDrvTimelineExpand()">
+        <span class="drv-stepper-title">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Зупинки рейсу</span>
+        </span>
+        <span class="drv-stepper-hint" id="drv-stepper-hint">згорнути ▴</span>
+      </div>
+      <div class="drv-stepper" id="drv-stepper">
+        <!-- Interactive stops list -->
+      </div>
+    </div>
+
+    <!-- Live Passenger Preview -->
+    <div class="drv-preview-card">
+      <div class="drv-prev-title">Що бачать пасажири:</div>
+      <div class="drv-prev-content" id="drv-prev-content">
+        Оберіть рейс або відзначте зупинку для трансляції пасажирам.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PASSENGER VIEW ══════════ -->
+  <div id="passenger-view">
+<div class="recovery-notice" role="note"><strong>Розклад працює.</strong> Час прибуття розраховано за розкладом. Повідомлення пасажирів і водіїв тимчасово недоступні.</div>
+    <!-- Direction Segmented Control (Apple Maps Style) -->
+    <p class="direction-question" id="direction-question">Звідки їдете?</p>
+    <div class="dir-segmented-control" role="group" aria-labelledby="direction-question">
+      <div class="dir-segment-indicator" id="dir-segment-indicator"></div>
+      <button class="dir-seg-btn active" id="btn-dir-to-pidg" aria-pressed="true" onclick="setDirection('to-pidg')">
+        <span class="dir-seg-title">
+          <span>З Тернополя</span>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </span>
+        <span class="dir-seg-sub" id="dir-sub-to-pidg">до Підгородного</span>
+      </button>
+      <button class="dir-seg-btn" id="btn-dir-to-tern" aria-pressed="false" onclick="setDirection('to-tern')">
+        <span class="dir-seg-title">
+          <span>З Підгородного</span>
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </span>
+        <span class="dir-seg-sub" id="dir-sub-to-tern">до Тернополя</span>
+      </button>
+    </div>
+
+    <!-- Collapsible Route Picker -->
+    <div class="route-picker" id="route-picker">
+      <button class="route-picker-toggle" id="route-picker-toggle" aria-expanded="false" aria-controls="route-picker-dropdown" onclick="toggleRoutePicker()">
+        <span class="route-picker-label" id="route-picker-label">Всі маршрутки</span>
+        <span class="route-picker-arrow" id="route-picker-arrow">▾</span>
+      </button>
+      <div class="route-picker-dropdown" id="route-picker-dropdown" style="display:none;">
+        <p class="route-multi-hint">Можна обрати кілька маршрутів</p>
+        <button class="route-pick-opt active" data-filter="all" onclick="pickRoute('all', this)">
+          <span class="route-pick-check">✓</span> Всі маршрутки
+        </button>
+        <button class="route-pick-opt" data-filter="pidg" onclick="pickRoute('pidg', this)">
+          <span class="route-badge-dot dot-pidg" style="width:8px;height:8px;"></span> Підгородне
+        </button>
+        <button class="route-pick-opt" data-filter="drag" onclick="pickRoute('drag', this)">
+          <span class="route-badge-dot dot-drag" style="width:8px;height:8px;"></span> Драганівка
+        </button>
+        <button class="route-pick-opt" data-filter="zab" onclick="pickRoute('zab', this)">
+          <span class="route-badge-dot dot-zab" style="width:8px;height:8px;"></span> Забойки
+        </button>
+        <button class="route-pick-opt" data-filter="dom" onclick="pickRoute('dom', this)">
+          <span class="route-badge-dot dot-dom" style="width:8px;height:8px;"></span> Домаморич
+        </button>
+        <button class="route-picker-done" onclick="toggleRoutePicker()">Готово</button>
+      </div>
+    </div>
+
+    <!-- Stop Selector (compact) -->
+    <div class="stop-section" style="margin-bottom:10px;">
+      <div class="stop-row" id="stop-row"></div>
+    </div>
+
+    <!-- Next Bus Card (Clean, Minimal) -->
+    <div class="next-card" id="hero-card">
+      <div class="next-card-top-row">
+        <span class="next-card-header" id="hero-label">НАЙБЛИЖЧИЙ АВТОБУС</span>
+        <div id="hero-route"></div>
+      </div>
+
+      <!-- Hero Main: Relative Countdown Prominent, Absolute Time Subtitle -->
+      <div class="hero-time-hero">
+        <div class="hero-rel-wrap">
+          <span class="hero-rel-val" id="hero-rel-time">--:--</span>
+          <span class="countdown-badge cd-soon" id="hero-countdown-badge">...</span>
+        </div>
+        <div class="hero-exact-row">
+          <span class="hero-exact-clock" id="hero-exact-clock">🕒 --:--</span>
+          <span class="hero-exact-stop" id="hero-exact-stop">посадка на зупинці</span>
+        </div>
+      </div>
+
+      <!-- Departure Urgency Progress Bar -->
+      <div class="hero-progress-track">
+        <div class="hero-progress-fill" id="hero-progress-fill"></div>
+      </div>
+
+      <!-- Dynamic Status Badge (Driver / Crowd) -->
+      <div id="hero-status-container"></div>
+
+      <!-- Live Route Stop-by-Stop Ladder (Interactive Timeline) -->
+      <div class="route-ladder-container">
+        <div class="ladder-header" onclick="toggleLadderExpand()">
+          <span class="ladder-title">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Зупинки та графік рейсу:</span>
+          </span>
+          <span class="ladder-expand-hint" id="ladder-expand-hint">розгорнути ▾</span>
+        </div>
+        <div class="route-ladder" id="hero-route-ladder" style="display:none;"></div>
+      </div>
+
+      <!-- Action Row: Report (primary) + share/calendar as small icons -->
+      <div class="next-card-actions" id="hero-actions">
+        <button class="card-act-btn highlight" onclick="openModal('report-modal')">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span>Повідомити статус</span>
+        </button>
+        <button class="card-act-btn" onclick="shareBusTrip()" style="flex:0 0 auto;padding:9px 10px;" title="Поділитися">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        </button>
+      </div>
+
+      <!-- Undo personal report banner -->
+      <div class="my-report-notice" id="my-report-notice">
+        <span id="my-report-text">Ваш статус враховано</span>
+        <button class="undo-btn" onclick="undoMyReport()">Скасувати</button>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <p class="schedule-direction" id="schedule-direction" aria-live="polite">Рейси з Тернополя → Підгородне</p>
+    <div id="schedule-container"></div>
+  </div>
+</div>
+
+<!-- Bottom Bar (Opal & Uber-Style Floating Capsule Dock with Apple-Style Indicator) -->
+<nav class="bottom-bar" id="main-bottom-bar" aria-label="Головна навігація">
+  <div class="dock-indicator" id="dock-indicator"></div>
+  <button class="bar-btn active" id="tab-nav-schedule" onclick="navToSchedule()" aria-label="Головна">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+      <polyline points="9 22 9 12 15 12 15 22"></polyline>
+    </svg>
+    <span>Головна</span>
+  </button>
+  <button class="bar-btn" id="tab-nav-driver" onclick="handleDriverBarBtn()" aria-label="Водію" style="display:none;">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="12" r="3"></circle>
+      <line x1="12" y1="2" x2="12" y2="9"></line>
+      <line x1="4.93" y1="16.5" x2="9.5" y2="13.5"></line>
+      <line x1="19.07" y1="16.5" x2="14.5" y2="13.5"></line>
+    </svg>
+    <span>Водію</span>
+  </button>
+  <button class="bar-btn" id="tab-nav-info" onclick="navToInfo()" aria-label="Довідка">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <span>Довідка</span>
+  </button>
+  <button class="bar-btn" id="tab-nav-install" onclick="navToInstall()" aria-label="Додаток">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+      <line x1="12" y1="18" x2="12.01" y2="18"></line>
+    </svg>
+    <span>Додаток</span>
+  </button>
+</nav>
+
+<!-- PWA Install Popup Toast -->
+<div class="pwa-toast-popup" id="pwa-install-toast" role="alert">
+  <div class="pwa-toast-content">
+    <div class="pwa-toast-icon">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </svg>
+    </div>
+    <div class="pwa-toast-body">
+      <div class="pwa-toast-title-row">
+        <span class="pwa-toast-title">Встановити як додаток</span>
+        <button class="pwa-toast-close" onclick="dismissPwaToast()" aria-label="Закрити">✕</button>
+      </div>
+      <div class="pwa-toast-desc">
+        Збережіть розклад на екран телефону через лінк. Детальна інструкція — у вкладці <b>«Додаток»</b> ⬇️
+      </div>
+      <div class="pwa-toast-actions">
+        <button class="pwa-toast-btn-primary" onclick="openPwaInstallFromToast()">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Як встановити</span>
+        </button>
+        <button class="pwa-toast-btn-secondary" onclick="copyDirectBusLinkFromToast(this)">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>Скопіювати лінк</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Passenger Report Modal (Friendly crowd options) -->
+<div class="modal-overlay" id="report-modal" onclick="closeOnBg(event, 'report-modal')">
+  <div class="modal-sheet">
+    <div class="sheet-drag-handle-bar"><div class="sheet-drag-handle"></div></div>
+    <div class="modal-top">
+      <h3>Повідомити статус</h3>
+      <button class="modal-x" onclick="closeModal('report-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Оберіть актуальний стан, щоб допомогти іншим пасажирам:</p>
+      
+      <div class="report-options">
+        <button class="report-opt-btn" style="border-color:rgba(46,196,119,0.35);" onclick="sendPassengerReport('seen')">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#2ec477" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          <div>
+            <div class="report-opt-title">Автобус прибув / їде</div>
+            <div class="report-opt-sub">Автобус на лінії, все за розкладом</div>
+          </div>
+        </button>
+
+        <button class="report-opt-btn" style="border-color:rgba(245,158,11,0.35);" onclick="sendPassengerReport('delayed')">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#f59e0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <div>
+            <div class="report-opt-title">Затримується на 2–5 хв</div>
+            <div class="report-opt-sub">Стою на зупинці, ще чекаємо</div>
+          </div>
+        </button>
+
+        <button class="report-opt-btn" style="border-color:rgba(244,63,94,0.35);" onclick="sendPassengerReport('missing')">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#f43f5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <div>
+            <div class="report-opt-title">Автобуса довго немає</div>
+            <div class="report-opt-sub">Час минув, на зупинці не з'явився</div>
+          </div>
+        </button>
+      </div>
+
+      <p style="font-size:11.5px;color:var(--text-tertiary);margin-top:12px;line-height:1.4;">
+        Якщо ви відмітите затримку, а автобус під'їде за хвилину — натисніть «Автобус прибув», і статус одразу зміниться на зелений.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Info Modal -->
+<div class="modal-overlay" id="info-modal" onclick="closeOnBg(event, 'info-modal')">
+  <div class="modal-sheet">
+    <div class="sheet-drag-handle-bar"><div class="sheet-drag-handle"></div></div>
+    <div class="modal-top">
+      <h3>Як їздять автобуси</h3>
+      <button class="modal-x" onclick="closeModal('info-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p><strong>Маршрут по місту (з Тернополя):</strong></p>
+      <ul>
+        <li><strong>АС-2</strong> (вул. Білогірська) → <strong>Збруч</strong> (вул. Торговиця) → <strong>Дамба</strong> → <strong>McDonald's / Танк</strong> (вул. Мазепи) → <strong>Бережанська</strong> (ЗУНУ) → виїзд на трасу E50 → <strong>Підгородне</strong></li>
+      </ul>
+      <p><strong>Зупинки в селі:</strong></p>
+      <ul>
+        <li><strong>Верхня зупинка</strong> — поворот з траси E50 у село.</li>
+        <li><strong>Нижня зупинка</strong> — центральна частина села, основна житлова лінія.</li>
+      </ul>
+      <p><strong>Час у дорозі:</strong></p>
+      <ul>
+        <li>АС-2 → Нижня: <strong>~17 хвилин</strong></li>
+        <li>Нижня → АС-2: <strong>~20 хвилин</strong></li>
+      </ul>
+      <p><strong>Живі статуси та краудсорсинг:</strong></p>
+      <ul>
+        <li>Пасажири можуть відмітити: «Автобус прибув», «Затримується» або «Довго немає».</li>
+        <li>Факт прибуття завжди скасовує будь-які скарги на затримку.</li>
+        <li>Офіційне скасування рейсу має право зробити лише водій автобуса через свій пульт.</li>
+      </ul>
+
+      <div class="info-cache-box">
+        <div class="info-cache-text">
+          <strong>Очищення кешу</strong>
+          <p>Якщо розклад не оновлюється або показує застарілі дані</p>
+        </div>
+        <button class="btn-clear-cache" onclick="clearAppCache()">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Очистити
+        </button>
+      </div>
+
+      <div class="driver-access-section" style="margin-top:24px;padding-top:16px;border-top:1px dashed var(--border);text-align:center;">
+        <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:8px;">Ви водій рейсового автобуса?</p>
+        <button class="btn-driver-entry" onclick="closeModal('info-modal');openModal('driver-modal');" style="background:rgba(226,147,66,0.12);border:1px solid rgba(226,147,66,0.35);color:var(--accent);border-radius:9999px;padding:8px 18px;font-size:12.5px;font-weight:700;cursor:pointer;">
+          👨‍✈️ Увійти в Пульт водія
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Driver Login Modal -->
+<div class="modal-overlay" id="driver-modal" onclick="closeOnBg(event, 'driver-modal')">
+  <div class="modal-sheet">
+    <div class="sheet-drag-handle-bar"><div class="sheet-drag-handle"></div></div>
+    <div class="modal-top">
+      <h3>Авторизація водія</h3>
+      <button class="modal-x" onclick="closeModal('driver-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Введіть PIN-код для входу в пульт водія:</p>
+      <input type="password" id="driver-pin-input" class="driver-pin-input" placeholder="PIN" maxlength="4" inputmode="numeric">
+      <button class="btn-submit" onclick="loginDriver()">Увійти в пульт</button>
+      <p style="font-size:12px;color:var(--text-secondary);margin-top:14px;line-height:1.4;background:var(--surface-raised);padding:10px;border-radius:12px;border:1px solid var(--border);">
+        <b>Як прив'язати Telegram водія:</b><br>
+        Напишіть у боті команду <code>/driver</code>. Після цього в меню з'явиться постійна кнопка <b>«Пульт водія»</b> і пароль більше ніколи вводити не доведеться!
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Install Modal (PWA Installation Hub) -->
+<div class="modal-overlay" id="install-modal" onclick="closeOnBg(event, 'install-modal')">
+  <div class="modal-sheet">
+    <div class="sheet-drag-handle-bar"><div class="sheet-drag-handle"></div></div>
+    <div class="modal-top">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <img src="/pidhorodne-bus-live/icon-192.png?v=3" alt="Іконка" style="width:38px;height:38px;border-radius:10px;border:1px solid rgba(226,147,66,0.35);box-shadow:0 4px 12px rgba(0,0,0,0.5);">
+        <div>
+          <h3 style="font-size:16px;line-height:1.2;">Встановити додаток</h3>
+          <span style="font-size:11px;color:var(--text-tertiary);">Миттєвий розклад на головному екрані</span>
+        </div>
+      </div>
+      <button class="modal-x" onclick="closeModal('install-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- 1-Click Install Button (Android Chrome / Samsung Internet) -->
+      <button class="btn-pwa-install" id="btn-pwa-install" onclick="triggerPwaInstall()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Встановити додаток на телефон</span>
+      </button>
+
+      <!-- Direct Link Box -->
+      <div class="install-link-box">
+        <span style="font-size:11px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px;">Пряме посилання на додаток:</span>
+        <div class="install-link-row">
+          <input type="text" id="pwa-direct-url" class="install-link-input" readonly value="https://endrymagolas-wq.github.io/pidhorodne-bus-live/">
+          <button class="btn-copy-link" id="btn-copy-link" onclick="copyDirectBusLink()">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span id="btn-copy-link-text">Скопіювати</span>
+          </button>
+        </div>
+        <p style="font-size:11px;color:var(--accent);margin-top:8px;line-height:1.4;margin-bottom:0;">
+          💡 <b>Як відкрити:</b> Скопіюйте посилання та відкрийте його у браузері <b>Safari (на iPhone)</b> або <b>Chrome (на Android)</b>. У вікні Telegram збереження на екран не працює.
+        </p>
+      </div>
+
+      <!-- Step-by-Step Instructions -->
+      <div class="install-steps-container">
+        <!-- iPhone / Safari Guide -->
+        <div class="install-step-card">
+          <div class="step-card-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path><path d="M10 2c1 .5 2 2 2 5"></path></svg>
+            <span>iPhone (браузер Safari):</span>
+          </div>
+          <ol class="step-list">
+            <li>Вставте посилання та відкрийте в <strong>Safari</strong>.</li>
+            <li>Натисніть кнопку <strong>«Поділитися»</strong> (квадрат зі стрілкою ⬆️ внизу).</li>
+            <li>Прокрутіть меню та оберіть <strong>«На початковий екран»</strong> (значок ➕).</li>
+            <li>Натисніть <strong>«Додати»</strong> у правому верхньому куті.</li>
+          </ol>
+        </div>
+
+        <!-- Android Guide -->
+        <div class="install-step-card">
+          <div class="step-card-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="3" ry="3"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <span>Android (Google Chrome / Samsung Internet):</span>
+          </div>
+          <ol class="step-list">
+            <li>Натисніть кнопку <strong>«Встановити додаток на телефон»</strong> вище.</li>
+            <li>Або відкрийте в Chrome, натисніть три крапки <strong>⋮</strong> у кутку.</li>
+            <li>Оберіть <strong>«Встановити додаток»</strong> чи <strong>«Додати на головний екран»</strong>.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Route definitions ──
+const routes = {
+  pidg: { code: 'Підг', name: 'Підгородне', icon: '🟢', pill: 'pill-pidg' },
+  drag: { code: 'Драг', name: 'Драганівка', icon: '🔵', pill: 'pill-drag' },
+  zab:  { code: 'Заб',  name: 'Забойки',    icon: '🟡', pill: 'pill-zab' },
+  dom:  { code: 'Дом',  name: 'Домаморич',  icon: '🟣', pill: 'pill-dom' }
+};
+
+// ── Stop configurations ──
+const stopsConfig = {
+  'to-pidg': [
+    { id: 'as2',         name: 'АС-2',         sub: 'вул. Білогірська',    offset: 0 },
+    { id: 'zbruch',      name: 'Збруч',         sub: 'вул. Торговиця',     offset: 2 },
+    { id: 'halychyna',   name: 'Галичина',      sub: 'Дамба / вул. Руська', offset: 4, approx: true },
+    { id: 'mcdonalds',   name: "McDonald's",    sub: 'Танк / вул. Мазепи', offset: 6 },
+    { id: 'berezhanska', name: 'Бережанська',   sub: 'ЗУНУ / виїзд',      offset: 8 },
+    { id: 'verhnya',     name: 'Верхня зуп.',   sub: 'Поворот / E50',      offset: 13, approx: true },
+    { id: 'nizhnya',     name: 'Нижня зуп.',    sub: 'Центр села',         offset: 17 },
+  ],
+  'to-tern': [
+    { id: 'nizhnya',     name: 'Нижня зуп.',    sub: 'Центр села',         offset: 0 },
+    { id: 'verhnya',     name: 'Верхня зуп.',   sub: 'Поворот / E50',      offset: 4, approx: true },
+    { id: 'berezhanska', name: 'Бережанська',   sub: 'ЗУНУ',               offset: 9 },
+    { id: 'mcdonalds',   name: "McDonald's",    sub: 'Танк / вул. Мазепи', offset: 11 },
+    { id: 'halychyna',   name: 'Галичина',      sub: 'Дамба / вул. Руська', offset: 14, approx: true },
+    { id: 'zbruch',      name: 'Збруч',         sub: 'вул. Торговиця',     offset: 16 },
+    { id: 'as2',         name: 'АС-2',          sub: 'вул. Білогірська',   offset: 20 },
+  ]
+};
+
+const destOffset = { 'to-pidg': 17, 'to-tern': 20 };
+const destName = { 'to-pidg': 'Нижня зуп.', 'to-tern': 'АС-2' };
+
+const scheduleToPidg = [
+  {t:"06:30",r:"drag"},{t:"06:40",r:"pidg"},{t:"06:45",r:"zab"},
+  {t:"07:10",r:"drag"},{t:"07:25",r:"dom"},{t:"07:45",r:"pidg"},
+  {t:"07:50",r:"drag"},{t:"08:15",r:"zab"},{t:"08:40",r:"pidg"},
+  {t:"08:40",r:"drag"},{t:"09:30",r:"drag"},{t:"09:40",r:"zab"},
+  {t:"10:15",r:"pidg"},{t:"10:30",r:"drag"},{t:"11:30",r:"zab"},
+  {t:"11:45",r:"drag"},{t:"11:55",r:"dom"},{t:"12:00",r:"pidg"},
+  {t:"13:00",r:"drag"},{t:"13:45",r:"pidg"},{t:"14:00",r:"zab"},
+  {t:"14:15",r:"drag"},{t:"14:55",r:"dom"},{t:"15:10",r:"pidg"},
+  {t:"15:30",r:"drag"},{t:"15:45",r:"zab"},{t:"16:30",r:"drag"},
+  {t:"16:40",r:"pidg"},{t:"17:30",r:"drag"},{t:"17:45",r:"zab"},
+  {t:"17:55",r:"dom"},{t:"18:00",r:"pidg"},{t:"18:30",r:"drag"},
+  {t:"19:20",r:"pidg"},{t:"19:30",r:"zab"},{t:"19:30",r:"drag"},
+  {t:"20:15",r:"drag"}
+];
+
+const scheduleToTern = [
+  {t:"07:00",r:"drag"},{t:"07:05",r:"pidg"},{t:"07:20",r:"zab"},
+  {t:"07:40",r:"drag"},{t:"08:05",r:"dom"},{t:"08:10",r:"pidg"},
+  {t:"08:20",r:"drag"},{t:"08:50",r:"zab"},{t:"09:10",r:"pidg"},
+  {t:"09:10",r:"drag"},{t:"10:00",r:"drag"},{t:"10:15",r:"zab"},
+  {t:"10:45",r:"pidg"},{t:"11:00",r:"drag"},{t:"12:05",r:"zab"},
+  {t:"12:15",r:"drag"},{t:"12:30",r:"pidg"},{t:"12:35",r:"dom"},
+  {t:"13:30",r:"drag"},{t:"14:15",r:"pidg"},{t:"14:35",r:"zab"},
+  {t:"14:45",r:"drag"},{t:"15:35",r:"dom"},{t:"15:40",r:"pidg"},
+  {t:"15:50",r:"drag"},{t:"16:20",r:"zab"},{t:"16:50",r:"drag"},
+  {t:"17:10",r:"pidg"},{t:"17:50",r:"drag"},{t:"18:20",r:"zab"},
+  {t:"18:30",r:"pidg"},{t:"18:35",r:"dom"},{t:"18:50",r:"drag"},
+  {t:"19:45",r:"pidg"},{t:"19:50",r:"drag"},{t:"20:05",r:"zab"}
+];
+
+// ── Telegram Haptic & State ──
+function tgHaptic(type = 'light') {
+  try {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+      const hf = window.Telegram.WebApp.HapticFeedback;
+      if (type === 'selection') hf.selectionChanged();
+      else if (type === 'success' || type === 'warning' || type === 'error') hf.notificationOccurred(type);
+      else hf.impactOccurred(type);
+      return;
+    }
+  } catch(e) {}
+  if (navigator.vibrate) {
+    try {
+      if (type === 'selection') navigator.vibrate(8);
+      else if (type === 'success') navigator.vibrate([15, 30, 20]);
+      else navigator.vibrate(15);
+    } catch(e) {}
+  }
+}
+
+let curDir = 'to-pidg';
+const selectedRoutes = new Set(); // Empty means all routes.
+let selectedStops = { 'to-pidg': 'mcdonalds', 'to-tern': 'nizhnya' };
+try {
+  const savedStops = localStorage.getItem('selectedStops_v2');
+  if (savedStops) {
+    const parsed = JSON.parse(savedStops);
+    if (parsed['to-pidg']) selectedStops['to-pidg'] = parsed['to-pidg'];
+    if (parsed['to-tern']) selectedStops['to-tern'] = parsed['to-tern'];
+  }
+} catch(e) {}
+
+let liveReports = [];
+let isDriverMode = false;
+let driverPin = '';
+let myLastReportId = null;
+
+
+// ── Helpers ──
+function toMin(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
+function toTime(n) { const mod = (n%1440+1440)%1440; return `${String(Math.floor(mod/60)).padStart(2,'0')}:${String(mod%60).padStart(2,'0')}`; }
+
+function getStopOffset() {
+  const stops = stopsConfig[curDir];
+  const sel = selectedStops[curDir];
+  const s = stops.find(s => s.id === sel);
+  return s ? s.offset : 0;
+}
+
+function getStopInfo() {
+  const stops = stopsConfig[curDir];
+  return stops.find(s => s.id === selectedStops[curDir]) || stops[0];
+}
+
+function busTimeAtStop(bus) {
+  return toTime(toMin(bus.t) + getStopOffset());
+}
+
+function busTimeAtDest(bus) {
+  return toTime(toMin(bus.t) + destOffset[curDir]);
+}
+
+function busMinAtStop(bus) {
+  return toMin(bus.t) + getStopOffset();
+}
+
+// ── Open-Meteo Weather Fetcher ──
+async function fetchWeather() {
+  try {
+    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=49.55&longitude=25.59&current=temperature_2m,weather_code&timezone=Europe%2FKyiv');
+    const data = await res.json();
+    if (data && data.current) {
+      const temp = Math.round(data.current.temperature_2m);
+      const code = data.current.weather_code;
+      let iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+      let desc = 'Ясно';
+      if (code >= 51 && code <= 67) {
+        iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M16 14v6"></path><path d="M8 14v6"></path><path d="M12 16v6"></path></svg>';
+        desc = 'Дощ';
+      } else if (code >= 71 && code <= 77) {
+        iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10 20-1.25-2.5-2.5 1.25"></path><path d="M14 20l1.25-2.5 2.5 1.25"></path><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
+        desc = 'Сніг';
+      } else if (code >= 80 && code <= 82) {
+        iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M16 14v6"></path><path d="M8 14v6"></path><path d="M12 16v6"></path></svg>';
+        desc = 'Злива';
+      } else if (code >= 95) {
+        iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"></path><polyline points="13 11 9 17 15 17 11 23"></polyline></svg>';
+        desc = 'Гроза';
+      } else if (code === 1 || code === 2 || code === 3) {
+        iconSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>';
+        desc = 'Мінлива хмарність';
+      } else if (code === 0) {
+        desc = 'Ясно';
+      }
+
+      document.getElementById('weather-icon').innerHTML = iconSvg;
+      document.getElementById('weather-desc').textContent = `${desc} (Тернопіль)`;
+      document.getElementById('weather-temp').textContent = `${temp > 0 ? '+' : ''}${temp}°C`;
+    }
+  } catch(e) {
+    document.getElementById('weather-desc').textContent = 'Підгородне / Тернопіль';
+  }
+}
+
+// ── Live Reports API ──
+async function fetchLiveReports() {
+  liveReports = [];
+}
+
+function getResolvedTripReport(dir, tripTime, routeType) {
+  const matches = liveReports.filter(r => r.direction === dir && r.trip_time === tripTime && r.route_type === routeType);
+  if (!matches.length) return null;
+
+  const driverRep = matches.find(r => r.report_type === 'driver');
+  if (driverRep) return driverRep;
+
+  const seenRep = matches.find(r => r.report_type === 'passenger' && r.status === 'seen');
+  if (seenRep) return seenRep;
+
+  return matches[0];
+}
+
+function isTripCancelled(dir, tripTime, routeType) {
+  const rep = getResolvedTripReport(dir, tripTime, routeType);
+  return rep && rep.report_type === 'driver' && rep.status === 'cancelled';
+}
+
+// ── Stop selector rendering ──
+function renderStops() {
+  const row = document.getElementById('stop-row');
+  const stops = stopsConfig[curDir];
+  const sel = selectedStops[curDir];
+  row.innerHTML = stops.map(s => {
+    const isSel = s.id === sel;
+    const offsetLabel = s.offset === 0 ? 'початок' : `+${s.offset}хв`;
+    return `
+      <button class="stop-chip ${isSel ? 'active' : ''}" onclick="selectStop('${s.id}')">
+        <span class="stop-name">${s.approx ? '~' : ''}${s.name}</span>
+        <span class="stop-sub">${s.sub} (${offsetLabel})</span>
+      </button>
+    `;
+  }).join('');
+
+  // Header stays clean — stop info shown in stop-row and hero card
+  // if (!isDriverMode || driverViewMode === 'passenger') {
+  //   const si = getStopInfo();
+  //   const subEl = document.getElementById('header-sub');
+  //   if (subEl) subEl.textContent = `Посадка: ${si.name} (${si.sub})`;
+  // }
+}
+
+function selectStop(id) {
+  selectedStops[curDir] = id;
+  try {
+    localStorage.setItem('selectedStops_v2', JSON.stringify(selectedStops));
+  } catch(e) {}
+  tgHaptic('selection');
+  renderStops();
+  updateAll();
+}
+
+function updateDirIndicator() {
+  requestAnimationFrame(() => {
+    const bar = document.querySelector('.dir-segmented-control');
+    const ind = document.getElementById('dir-segment-indicator');
+    const activeBtn = document.querySelector('.dir-seg-btn.active');
+    if (!bar || !ind || !activeBtn) return;
+    const barRect = bar.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const left = btnRect.left - barRect.left;
+    const width = btnRect.width;
+    ind.style.transform = `translateX(${left}px)`;
+    ind.style.width = `${width}px`;
+  });
+}
+
+function setDirection(dir) {
+  curDir = dir;
+  tgHaptic('selection');
+  const bPidg = document.getElementById('btn-dir-to-pidg');
+  const bTern = document.getElementById('btn-dir-to-tern');
+  if (bPidg) bPidg.classList.toggle('active', dir === 'to-pidg');
+  if (bTern) bTern.classList.toggle('active', dir === 'to-tern');
+  if (bPidg) bPidg.setAttribute('aria-pressed', String(dir === 'to-pidg'));
+  if (bTern) bTern.setAttribute('aria-pressed', String(dir === 'to-tern'));
+  const scheduleDirection = document.getElementById('schedule-direction');
+  if (scheduleDirection) scheduleDirection.textContent = dir === 'to-pidg'
+    ? 'Рейси з Тернополя → Підгородне'
+    : 'Рейси з Підгородного → Тернопіль';
+  updateDirIndicator();
+
+  const origEl = document.getElementById('header-origin');
+  const destEl = document.getElementById('header-dest');
+  if (origEl && destEl) {
+    if (dir === 'to-pidg') {
+      origEl.textContent = 'Тернопіль';
+      destEl.textContent = 'Підгородне';
+    } else {
+      origEl.textContent = 'Підгородне';
+      destEl.textContent = 'Тернопіль';
+    }
+  }
+
+  renderStops();
+  updateAll();
+}
+
+function setFilter(f, el) {
+  pickRoute(f, el);
+}
+
+// ── Collapsible Route Picker ──
+const routePickerLabels = {
+  all: 'Всі маршрутки',
+  pidg: '<span class="route-badge-dot dot-pidg" style="width:8px;height:8px;display:inline-block;margin-right:6px;vertical-align:middle;"></span>Підгородне',
+  drag: '<span class="route-badge-dot dot-drag" style="width:8px;height:8px;display:inline-block;margin-right:6px;vertical-align:middle;"></span>Драганівка',
+  zab: '<span class="route-badge-dot dot-zab" style="width:8px;height:8px;display:inline-block;margin-right:6px;vertical-align:middle;"></span>Забойки',
+  dom: '<span class="route-badge-dot dot-dom" style="width:8px;height:8px;display:inline-block;margin-right:6px;vertical-align:middle;"></span>Домаморич'
+};
+
+let isRoutePickerOpen = false;
+function toggleRoutePicker() {
+  isRoutePickerOpen = !isRoutePickerOpen;
+  const toggle = document.getElementById('route-picker-toggle');
+  const dropdown = document.getElementById('route-picker-dropdown');
+  if (!toggle || !dropdown) return;
+  toggle.classList.toggle('open', isRoutePickerOpen);
+  toggle.setAttribute('aria-expanded', String(isRoutePickerOpen));
+  document.querySelectorAll('.route-pick-opt').forEach(option => {
+    option.setAttribute('aria-pressed', String(option.classList.contains('active')));
+  });
+  dropdown.style.display = isRoutePickerOpen ? 'block' : 'none';
+  tgHaptic('selection');
+}
+
+function pickRoute(filter, el) {
+  if (filter === 'all') {
+    selectedRoutes.clear();
+  } else if (Object.prototype.hasOwnProperty.call(routePickerLabels, filter)) {
+    if (selectedRoutes.has(filter)) selectedRoutes.delete(filter);
+    else selectedRoutes.add(filter);
+    if (selectedRoutes.size === 4) selectedRoutes.clear();
+  } else {
+    return;
+  }
+  tgHaptic('impact_light');
+
+  document.querySelectorAll('.route-pick-opt').forEach(option => {
+    const active = option.dataset.filter === 'all'
+      ? selectedRoutes.size === 0
+      : selectedRoutes.has(option.dataset.filter);
+    option.classList.toggle('active', active);
+    option.setAttribute('aria-pressed', String(active));
+  });
+
+  // Update toggle label
+  const labelEl = document.getElementById('route-picker-label');
+  const names = { pidg: 'Підгородне', drag: 'Драганівка', zab: 'Забойки', dom: 'Домаморич' };
+  if (labelEl) labelEl.textContent = selectedRoutes.size
+    ? Array.from(selectedRoutes, route => names[route]).join(' · ')
+    : 'Всі маршрутки';
+
+  renderSchedule();
+  updateAll();
+}
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('live-clock').textContent =
+    now.toLocaleTimeString('uk-UA', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
+}
+
+function getList() {
+  const raw = curDir === 'to-pidg' ? scheduleToPidg : scheduleToTern;
+  if (selectedRoutes.size === 0) return raw;
+  return raw.filter(b => selectedRoutes.has(b.r));
+}
+
+// Auto-skip cancelled trips in hero countdown for passengers & return upcoming departures
+function findNext() {
+  const now = new Date();
+  const cur = now.getHours()*60 + now.getMinutes();
+  const list = getList();
+  const offset = getStopOffset();
+  let next = null, tomorrow = false;
+  const upcoming = [];
+
+  const validTrips = isDriverMode ? list : list.filter(b => !isTripCancelled(curDir, b.t, b.r));
+  const pool = validTrips.length ? validTrips : list;
+
+  for (let i = 0; i < pool.length; i++) {
+    const atStop = toMin(pool[i].t) + offset;
+    if (atStop >= cur) {
+      next = pool[i];
+      for (let j = i + 1; j < Math.min(i + 4, pool.length); j++) {
+        upcoming.push(pool[j]);
+      }
+      break;
+    }
+  }
+  if (!next && pool.length) {
+    next = pool[0];
+    tomorrow = true;
+    for (let j = 1; j < Math.min(4, pool.length); j++) {
+      upcoming.push(pool[j]);
+    }
+  }
+  return { next, following: upcoming[0] || null, upcoming, tomorrow, cur };
+}
+
+// ── Hero Status Badge Update ──
+function updateHeroStatus() {
+  const container = document.getElementById('hero-status-container');
+  const { next } = findNext();
+  if (!next) { container.innerHTML = ''; return; }
+
+  const rep = getResolvedTripReport(curDir, next.t, next.r);
+  if (!rep) {
+    container.innerHTML = '';
+    return;
+  }
+
+  if (rep.report_type === 'driver') {
+    const timeStr = rep.created_at ? rep.created_at.slice(11, 16) : '';
+    if (rep.status === 'ok') {
+      const stopStr = rep.stop_name && rep.stop_name !== 'base'
+        ? `проїхав «${rep.stop_name}» ${timeStr ? '(' + timeStr + ')' : ''}`
+        : 'підтвердив виїзд на лінію';
+      container.innerHTML = `<div class="status-badge badge-driver-ok">👨‍✈️ Офіційно від водія: ${stopStr}</div>`;
+    } else if (rep.status === 'cancelled') {
+      container.innerHTML = `<div class="status-badge badge-driver-cancel">❌ Водій: рейс скасовано</div>`;
+    } else if (rep.status === 'delayed_10') {
+      container.innerHTML = `<div class="status-badge badge-driver-delay">⏳ Водій повідомляє: затримка +5–10 хв ${timeStr ? '(' + timeStr + ')' : ''}</div>`;
+    }
+  } else if (rep.report_type === 'passenger') {
+    if (rep.status === 'seen') {
+      container.innerHTML = `<div class="status-badge badge-seen">👥 Пасажири на зупинці: автобус їде / на лінії</div>`;
+    } else if (rep.status === 'delayed') {
+      container.innerHTML = `<div class="status-badge badge-delayed">👥 Пасажири повідомляють: затримка ~2–5 хв</div>`;
+    } else if (rep.status === 'missing') {
+      container.innerHTML = `<div class="status-badge badge-missing">❓ На зупинці ще очікують автобус</div>`;
+    }
+  }
+}
+
+let isLadderExpanded = false;
+function toggleLadderExpand() {
+  isLadderExpanded = !isLadderExpanded;
+  tgHaptic('selection');
+  const ladder = document.getElementById('hero-route-ladder');
+  const hint = document.getElementById('ladder-expand-hint');
+  if (ladder) ladder.style.display = isLadderExpanded ? 'flex' : 'none';
+  if (hint) hint.textContent = isLadderExpanded ? 'згорнути ▴' : 'розгорнути ▾';
+}
+
+function renderRouteLadder(trip) {
+  const ladder = document.getElementById('hero-route-ladder');
+  if (!ladder || !trip) return;
+
+  const stops = stopsConfig[curDir];
+  const tripProg = getDriverTripProgress(curDir, trip.t, trip.r);
+  const baseMin = toMin(trip.t);
+  const myStopId = selectedStops[curDir];
+
+  let foundCurrent = false;
+  let html = '';
+
+  stops.forEach((s, idx) => {
+    const isPassed = Boolean(tripProg.passedMap[s.name]);
+    const isMyStop = s.id === myStopId;
+    let isCurrent = false;
+
+    if (!isPassed && !foundCurrent && (tripProg.status === 'ok' || Object.keys(tripProg.passedMap).length > 0)) {
+      isCurrent = true;
+      foundCurrent = true;
+    }
+
+    const t = toTime(baseMin + s.offset);
+    const passTime = tripProg.passedMap[s.name];
+
+    let stepClass = 'ladder-step';
+    if (isPassed) stepClass += ' passed';
+    if (isCurrent) stepClass += ' current';
+    if (isMyStop) stepClass += ' my-stop';
+
+    html += `
+      <div class="${stepClass}">
+        <div class="ladder-spine">
+          <div class="ladder-dot"></div>
+          <div class="ladder-line"></div>
+        </div>
+        <div class="ladder-info">
+          <div class="ladder-name-wrap">
+            <span class="ladder-name">${s.name}</span>
+            ${isMyStop ? '<span class="ladder-badge">Ваша посадка</span>' : ''}
+            ${isCurrent ? '<span class="ladder-badge" style="background:rgba(46,196,119,0.2);color:#2ec477;border-color:rgba(46,196,119,0.35);">Наступна</span>' : ''}
+          </div>
+          <span class="ladder-time">${isPassed ? `✓ ${passTime}` : (s.approx ? '~' : '') + t}</span>
+        </div>
+      </div>
+    `;
+  });
+
+  ladder.innerHTML = html;
+}
+
+function scrollToTrip(timeStr) {
+  tgHaptic('light');
+  const allRows = document.querySelectorAll('.bus-row');
+  for (let row of allRows) {
+    if (row.textContent.includes(timeStr)) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.style.boxShadow = '0 0 0 2px var(--accent)';
+      setTimeout(() => { row.style.boxShadow = ''; }, 1600);
+      break;
+    }
+  }
+}
+
+// ── Hero Card ──
+function updateHero() {
+  const { next, following, upcoming, tomorrow, cur } = findNext();
+  if (!next) return;
+
+  const r = routes[next.r];
+  const atStop = busMinAtStop(next);
+  let diff = tomorrow ? (1440 - cur + atStop) : (atStop - cur);
+
+  // 1. Relative countdown as prominent title
+  const relValEl = document.getElementById('hero-rel-time');
+  if (relValEl) {
+    if (diff <= 0) relValEl.textContent = 'відправляється зараз!';
+    else if (diff === 1) relValEl.textContent = 'через 1 хвилину';
+    else if (diff < 60) relValEl.textContent = `через ${diff} хв`;
+    else relValEl.textContent = `через ${Math.floor(diff/60)} год ${diff%60} хв`;
+  }
+
+  // 2. Countdown Badge
+  const cdBadge = document.getElementById('hero-countdown-badge');
+  if (cdBadge) {
+    if (diff <= 5) {
+      cdBadge.textContent = 'терміново';
+      cdBadge.className = 'countdown-badge cd-urgent';
+    } else if (diff <= 20) {
+      cdBadge.textContent = 'скоро';
+      cdBadge.className = 'countdown-badge cd-soon';
+    } else {
+      cdBadge.textContent = 'за розкладом';
+      cdBadge.className = 'countdown-badge cd-far';
+    }
+  }
+
+  // 3. Progress fill
+  const progressFill = document.getElementById('hero-progress-fill');
+  if (progressFill) {
+    const pct = Math.max(4, Math.min(100, Math.round(((30 - Math.min(30, diff)) / 30) * 100)));
+    progressFill.style.width = `${pct}%`;
+    progressFill.classList.toggle('urgent', diff <= 10);
+  }
+
+  // 4. Exact departure time with delay detection
+  const normalTime = busTimeAtStop(next);
+  const rep = getResolvedTripReport(curDir, next.t, next.r);
+  const isDelayed = rep && (rep.status === 'delayed_10' || rep.status === 'delayed');
+  const delayMins = rep && rep.status === 'delayed_10' ? 10 : 4;
+  const delayedTime = toTime(toMin(normalTime) + delayMins);
+
+  const clockEl = document.getElementById('hero-exact-clock');
+  if (clockEl) {
+    if (isDelayed) {
+      clockEl.innerHTML = `<span class="bus-time-struck">${normalTime}</span> <span style="color:var(--yellow);font-weight:800;">➔ ${delayedTime} (+${delayMins} хв)</span>`;
+    } else {
+      clockEl.innerHTML = `<span>🕒 о ${normalTime}</span>`;
+    }
+  }
+
+  const stopInfo = getStopInfo();
+  const stopEl = document.getElementById('hero-exact-stop');
+  if (stopEl) stopEl.textContent = `• посадка: «${stopInfo.name}»`;
+
+  document.getElementById('hero-label').textContent = tomorrow ? 'ПЕРШИЙ АВТОБУС ЗАВТРА' : 'НАЙБЛИЖЧИЙ АВТОБУС';
+  document.getElementById('hero-route').innerHTML = `
+    <span class="pill ${r.pill}"><span class="pill-dot"></span><span>${r.name}</span></span>`;
+
+  updateHeroStatus();
+  renderRouteLadder(next);
+
+  // 5. Upcoming Departures Micro-Feed
+  const upChipsEl = document.getElementById('hero-upcoming-chips');
+  if (upChipsEl) {
+    if (upcoming && upcoming.length) {
+      upChipsEl.innerHTML = upcoming.map(u => {
+        const ur = routes[u.r];
+        const uAtStop = busMinAtStop(u);
+        const uDiff = tomorrow ? (1440 - cur + uAtStop) : (uAtStop - cur);
+        const uDiffStr = uDiff < 60 ? `через ${uDiff} хв` : `через ${Math.floor(uDiff/60)}г ${uDiff%60}хв`;
+        return `
+          <div class="hero-up-chip" onclick="scrollToTrip('${u.t}')">
+            <span class="pill pill-sm ${ur.pill}"><span class="pill-dot"></span><span>${ur.code}</span></span>
+            <span class="hero-up-time">${busTimeAtStop(u)}</span>
+            <span class="hero-up-rel">${uDiffStr}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      upChipsEl.innerHTML = '<span style="font-size:11.5px;color:var(--text-tertiary);padding:4px 0;">Більше рейсів сьогодні немає</span>';
+    }
+  }
+}
+
+let showPastTrips = false;
+
+function togglePastTrips() {
+  showPastTrips = !showPastTrips;
+  renderSchedule();
+}
+
+function renderBusRow(b, isPast, isCurrent, offset, dName, isAtDest) {
+  const r = routes[b.r];
+  const timeAtStop = busTimeAtStop(b);
+  const timeAtDest = busTimeAtDest(b);
+
+  const rep = getResolvedTripReport(curDir, b.t, b.r);
+  const isCancelled = rep && rep.report_type === 'driver' && rep.status === 'cancelled';
+  const isDelayed = rep && (rep.status === 'delayed_10' || rep.status === 'delayed');
+  const delayMins = rep && rep.status === 'delayed_10' ? 10 : 4;
+  const delayedTime = toTime(toMin(timeAtStop) + delayMins);
+
+  let subText = '';
+  if (isCancelled) {
+    subText = 'СКАСОВАНО ВОДІЄМ';
+  } else if (rep && rep.report_type === 'driver' && rep.status === 'ok') {
+    const timeStr = rep.created_at ? rep.created_at.slice(11, 16) : '';
+    if (rep.stop_name && rep.stop_name !== 'base') {
+      subText = `👨‍✈️ Водій: проїхав ${rep.stop_name} ${timeStr ? '(' + timeStr + ')' : ''}`;
+    } else {
+      subText = '👨‍✈️ Водій: на лінії за розкладом';
+    }
+  } else if (rep && rep.report_type === 'driver' && rep.status === 'delayed_10') {
+    subText = '👨‍✈️ Водій: затримка ~10 хв';
+  } else if (rep && rep.report_type === 'passenger') {
+    if (rep.status === 'seen') subText = '👥 Пасажири бачили автобус';
+    else if (rep.status === 'delayed') subText = '👥 Повідомлено про затримку ~3 хв';
+    else if (rep.status === 'missing') subText = '👥 Очікують на зупинці';
+  } else if (!isAtDest) {
+    subText = `→ ${dName} ~${timeAtDest}`;
+  } else {
+    const startName = curDir === 'to-pidg' ? 'АС-2' : 'Нижня';
+    subText = `з ${startName} ${b.t}`;
+  }
+
+  let timeHtml = `<span class="bus-time">${timeAtStop}</span>`;
+  if (isCancelled) {
+    timeHtml = `
+      <span class="bus-time" style="text-decoration:line-through;color:var(--red);">${timeAtStop}</span>
+      <span class="bus-cancelled-tag">Скасовано</span>
+    `;
+  } else if (isDelayed) {
+    timeHtml = `
+      <div class="bus-time-delayed-wrap">
+        <span class="bus-time-struck">${timeAtStop}</span>
+        <span class="bus-time-new">${delayedTime}</span>
+        <span class="bus-delay-tag">+${delayMins}хв</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="bus-row ${isPast ? 'past' : ''} ${isCurrent ? 'current' : ''} ${isCancelled ? 'cancelled' : ''}">
+      <div class="bus-left">
+        <div class="bus-time-col">
+          ${timeHtml}
+          <span class="bus-subtime">${subText}</span>
+        </div>
+        <span class="pill ${r.pill}"><span class="pill-dot"></span><span>${r.code}</span></span>
+      </div>
+      <div class="bus-right">
+        <span class="bus-route-name">${r.name}</span>
+      </div>
+    </div>`;
+}
+
+// ── Schedule List ──
+function renderSchedule() {
+  const container = document.getElementById('schedule-container');
+  const list = getList();
+  const { next, tomorrow, cur } = findNext();
+  const offset = getStopOffset();
+  const dName = destName[curDir];
+  const stopInfo = getStopInfo();
+  const isAtDest = (curDir === 'to-pidg' && stopInfo.id === 'nizhnya') ||
+                   (curDir === 'to-tern' && stopInfo.id === 'as2');
+
+  const pastItems = [];
+  const periods = [
+    { label: 'Ранок', items: [] },
+    { label: 'День', items: [] },
+    { label: 'Вечір', items: [] }
+  ];
+
+  list.forEach(b => {
+    const atStop = toMin(b.t) + offset;
+    const isPast = !tomorrow && atStop < cur;
+    if (isPast) {
+      pastItems.push(b);
+    } else {
+      if (atStop < 720) periods[0].items.push(b);
+      else if (atStop < 990) periods[1].items.push(b);
+      else periods[2].items.push(b);
+    }
+  });
+
+  let html = '';
+
+  // 1. Collapsible Past Trips section
+  if (pastItems.length > 0) {
+    html += `
+      <div class="past-accordion">
+        <button class="past-accordion-btn" onclick="togglePastTrips()">
+          <span style="display:flex;align-items:center;gap:7px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>Минулі рейси сьогодні</span>
+            <span class="past-acc-badge">${pastItems.length}</span>
+          </span>
+          <span style="font-size:12px;color:var(--accent);font-weight:700;">
+            ${showPastTrips ? 'Приховати ▴' : 'Показати ▾'}
+          </span>
+        </button>
+        <div class="past-accordion-content" style="display: ${showPastTrips ? 'flex' : 'none'};">
+          ${pastItems.map(b => renderBusRow(b, true, false, offset, dName, isAtDest)).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // 2. Active / Upcoming periods
+  periods.forEach(p => {
+    if (!p.items.length) return;
+    html += `<div class="period-label">${p.label}</div><div class="bus-list">`;
+
+    p.items.forEach(b => {
+      const isCurrent = next && b.t === next.t && b.r === next.r && !tomorrow;
+      html += renderBusRow(b, false, isCurrent, offset, dName, isAtDest);
+    });
+    html += '</div>';
+  });
+
+  // If tomorrow and periods are empty
+  if (tomorrow && periods.every(p => p.items.length === 0) && next) {
+    html += `
+      <div class="period-label">Завтра вранці</div>
+      <div class="bus-list">
+        ${renderBusRow(next, false, true, offset, dName, isAtDest)}
+      </div>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+// ── Web Share API ──
+async function shareBusTrip() {
+  const { next } = findNext();
+  if (!next) return;
+  const stopInfo = getStopInfo();
+  const time = busTimeAtStop(next);
+  const r = routes[next.r];
+  const shareText = `🚌 Автобус на ${r.name} буде на зупинці «${stopInfo.name}» о ${time}!\nОнлайн-розклад: ${window.location.origin}/pidhorodne-bus-live/`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `Автобус на ${r.name}`,
+        text: shareText,
+        url: `${window.location.origin}/pidhorodne-bus-live/`
+      });
+    } catch(e) {}
+  } else {
+    navigator.clipboard.writeText(shareText);
+    alert('📋 Інформацію про рейс скопійовано в буфер обміну!');
+  }
+}
+
+// ── Add to Calendar (.ics generation) ──
+function addTripToCalendar() {
+  const { next, tomorrow } = findNext();
+  if (!next) return;
+  const stopInfo = getStopInfo();
+  const time = busTimeAtStop(next);
+  const r = routes[next.r];
+
+  const now = new Date();
+  if (tomorrow) now.setDate(now.getDate() + 1);
+
+  const [hours, minutes] = time.split(':').map(Number);
+  const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+  const endDate = new Date(startDate.getTime() + 20 * 60000);
+
+  const pad = n => String(n).padStart(2, '0');
+  const formatICSDate = d => `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+
+  const icsData = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Pidhorodne Bus//UA',
+    'BEGIN:VEVENT',
+    `SUMMARY:🚌 Автобус: ${r.name}`,
+    `DESCRIPTION:Посадка на зупинці ${stopInfo.name} (${stopInfo.sub}) о ${time}. Напрямок: ${curDir === 'to-pidg' ? 'Підгородне' : 'Тернопіль'}.`,
+    `LOCATION:${stopInfo.name}, Тернопіль`,
+    `DTSTART:${formatICSDate(startDate)}`,
+    `DTEND:${formatICSDate(endDate)}`,
+    'BEGIN:VALARM',
+    'TRIGGER:-PT10M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Нагадування: автобус за 10 хвилин!',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  link.setAttribute('download', `bus_${time.replace(':','')}.ics`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// ── Passenger Report Flow ──
+async function sendPassengerReport(statusVal) {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+async function undoMyReport() {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+// ── Dedicated Driver Navigator Cockpit Logic ──
+let driverViewMode = 'cockpit'; // 'cockpit' or 'passenger'
+let drvRoute = localStorage.getItem('drvRoute') || 'pidg';
+let drvDir = 'to-pidg';
+let drvSelectedTrip = null;
+let showDrvPassedStops = false;
+
+function toggleDrvPassedStops() {
+  showDrvPassedStops = !showDrvPassedStops;
+  renderDriverCockpit();
+}
+
+function loginDriver() {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+function applyDriverMode() {
+  const drvBtn = document.getElementById('tab-nav-driver');
+  const bar = document.getElementById('driver-mode-bar');
+  if (drvBtn) drvBtn.style.display = isDriverMode ? 'inline-flex' : 'none';
+  if (bar) bar.style.display = isDriverMode ? 'flex' : 'none';
+
+  if (isDriverMode) {
+    switchDriverView('cockpit');
+  } else {
+    switchDriverView('passenger');
+  }
+  syncBottomBarState();
+  updateDockIndicator();
+}
+
+let currentActiveTab = 'tab-nav-schedule';
+
+function closeAllModals() {
+  document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+}
+
+function openModal(id) {
+  // Always close other open modals to prevent layering/stacking conflicts
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    if (m.id !== id) m.classList.remove('open');
+  });
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('open');
+    const sheet = el.querySelector('.modal-sheet');
+    if (sheet) sheet.scrollTop = 0;
+  }
+}
+
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+  syncBottomBarState();
+}
+
+function closeOnBg(e, id) {
+  if (e.target.id === id) {
+    closeModal(id);
+  }
+}
+
+function navToSchedule() {
+  closeAllModals();
+  if (isDriverMode && driverViewMode === 'cockpit') {
+    switchDriverView('passenger');
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  syncBottomBarState('tab-nav-schedule');
+}
+
+function handleDriverBarBtn() {
+  closeAllModals();
+  if (isDriverMode) {
+    switchDriverView('cockpit');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    syncBottomBarState('tab-nav-driver');
+  } else {
+    openModal('driver-modal');
+    syncBottomBarState('tab-nav-driver');
+  }
+}
+
+function navToInfo() {
+  const modal = document.getElementById('info-modal');
+  if (modal && modal.classList.contains('open')) {
+    closeModal('info-modal');
+    return;
+  }
+  openModal('info-modal');
+  syncBottomBarState('tab-nav-info');
+}
+
+function navToInstall() {
+  const modal = document.getElementById('install-modal');
+  if (modal && modal.classList.contains('open')) {
+    closeModal('install-modal');
+    return;
+  }
+  openModal('install-modal');
+  syncBottomBarState('tab-nav-install');
+}
+
+function syncBottomBarState(forceTabId = null) {
+  const allTabs = ['tab-nav-schedule', 'tab-nav-driver', 'tab-nav-info', 'tab-nav-install'];
+
+  if (forceTabId) {
+    currentActiveTab = forceTabId;
+  } else {
+    const openModalEl = document.querySelector('.modal-overlay.open');
+    if (openModalEl) {
+      if (openModalEl.id === 'info-modal') currentActiveTab = 'tab-nav-info';
+      else if (openModalEl.id === 'install-modal') currentActiveTab = 'tab-nav-install';
+      else if (openModalEl.id === 'driver-modal') currentActiveTab = 'tab-nav-driver';
+      else currentActiveTab = 'tab-nav-schedule';
+    } else {
+      if (isDriverMode && driverViewMode === 'cockpit') {
+        currentActiveTab = 'tab-nav-driver';
+      } else {
+        currentActiveTab = 'tab-nav-schedule';
+      }
+    }
+  }
+
+  allTabs.forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      if (id === currentActiveTab) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    }
+  });
+
+  updateDockIndicator();
+}
+
+function updateDockIndicator() {
+  requestAnimationFrame(() => {
+    const bar = document.getElementById('main-bottom-bar');
+    const ind = document.getElementById('dock-indicator');
+    const activeBtn = document.querySelector('#main-bottom-bar .bar-btn.active');
+    if (!bar || !ind || !activeBtn) return;
+
+    const barRect = bar.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const left = btnRect.left - barRect.left;
+    const width = btnRect.width;
+
+    ind.style.transform = `translateX(${left}px)`;
+    ind.style.width = `${width}px`;
+  });
+}
+
+function exitDriverMode() {
+  isDriverMode = false;
+  driverPin = '';
+  localStorage.removeItem('isDriverMode');
+  localStorage.removeItem('driverPin');
+  applyDriverMode();
+  updateAll();
+  syncBottomBarState();
+}
+
+function switchDriverView(mode) {
+  driverViewMode = mode;
+  const bar = document.getElementById('driver-mode-bar');
+  const pNotice = document.getElementById('driver-passenger-notice');
+  const drvCockpit = document.getElementById('driver-cockpit-view');
+  const passView = document.getElementById('passenger-view');
+  const btnCockpit = document.getElementById('btn-switch-cockpit');
+  const btnPassenger = document.getElementById('btn-switch-passenger');
+
+  if (!isDriverMode) {
+    if (bar) bar.style.display = 'none';
+    if (pNotice) pNotice.style.display = 'none';
+    if (drvCockpit) drvCockpit.style.display = 'none';
+    if (passView) passView.style.display = 'block';
+    const brandH1 = document.getElementById('brand-title-h1');
+    const headerSub = document.getElementById('header-sub');
+    const si = getStopInfo();
+    if (brandH1) brandH1.textContent = 'Автобуси ОТГ';
+    if (headerSub) headerSub.textContent = 'Розклад приміських автобусів';
+    syncBottomBarState();
+    return;
+  }
+
+  if (bar) bar.style.display = 'flex';
+  if (mode === 'cockpit') {
+    if (btnCockpit) btnCockpit.classList.add('active');
+    if (btnPassenger) btnPassenger.classList.remove('active');
+    if (pNotice) pNotice.style.display = 'none';
+    if (drvCockpit) drvCockpit.style.display = 'block';
+    if (passView) passView.style.display = 'none';
+    const brandH1 = document.getElementById('brand-title-h1');
+    const headerSub = document.getElementById('header-sub');
+    const r = routes[drvRoute] || { name: 'Підгородне' };
+    if (brandH1) brandH1.innerHTML = `<span>🚍 Пульт водія</span>`;
+    if (headerSub) headerSub.textContent = `${r.name} • ${drvSelectedTrip ? drvSelectedTrip.t : ''}`;
+    renderDriverCockpit();
+  } else {
+    if (btnCockpit) btnCockpit.classList.remove('active');
+    if (btnPassenger) btnPassenger.classList.add('active');
+    if (pNotice) pNotice.style.display = 'flex';
+    if (drvCockpit) drvCockpit.style.display = 'none';
+    if (passView) passView.style.display = 'block';
+    const brandH1 = document.getElementById('brand-title-h1');
+    const headerSub = document.getElementById('header-sub');
+    const si = getStopInfo();
+    if (brandH1) brandH1.textContent = 'Автобуси ОТГ';
+    if (headerSub) headerSub.textContent = 'Розклад приміських автобусів';
+    updateAll();
+  }
+  syncBottomBarState();
+}
+
+let isDriverPickerOpen = false;
+function toggleDriverTripPicker() {
+  isDriverPickerOpen = !isDriverPickerOpen;
+  tgHaptic('selection');
+  const drawer = document.getElementById('drv-picker-drawer');
+  const btnText = document.getElementById('drv-picker-btn-text');
+  if (drawer) drawer.style.display = isDriverPickerOpen ? 'block' : 'none';
+  if (btnText) btnText.textContent = isDriverPickerOpen ? 'Згорнути ▴' : 'Змінити рейс ▾';
+}
+
+let isDrvTimelineExpanded = true;
+function toggleDrvTimelineExpand() {
+  isDrvTimelineExpanded = !isDrvTimelineExpanded;
+  tgHaptic('selection');
+  const stepper = document.getElementById('drv-stepper');
+  const hint = document.getElementById('drv-stepper-hint');
+  if (stepper) stepper.style.display = isDrvTimelineExpanded ? 'flex' : 'none';
+  if (hint) hint.textContent = isDrvTimelineExpanded ? 'згорнути ▴' : 'розгорнути ▾';
+}
+
+function setDriverRoute(routeKey) {
+  drvRoute = routeKey;
+  localStorage.setItem('drvRoute', routeKey);
+  autoPickDriverTrip();
+  renderDriverCockpit();
+}
+
+function setDriverDirection(dir) {
+  drvDir = dir;
+  tgHaptic('selection');
+  autoPickDriverTrip();
+  renderDriverCockpit();
+}
+
+function getDriverTripsList() {
+  const schedule = drvDir === 'to-pidg' ? scheduleToPidg : scheduleToTern;
+  return schedule.filter(b => b.r === drvRoute);
+}
+
+function autoPickDriverTrip() {
+  const trips = getDriverTripsList();
+  if (!trips.length) {
+    drvSelectedTrip = null;
+    return;
+  }
+  const now = new Date();
+  const cur = now.getHours() * 60 + now.getMinutes();
+
+  let found = trips.find(b => toMin(b.t) >= cur - 25);
+  if (!found) found = trips[0];
+  drvSelectedTrip = found;
+}
+
+function selectDriverTrip(timeStr) {
+  const trips = getDriverTripsList();
+  const found = trips.find(b => b.t === timeStr);
+  if (found) {
+    drvSelectedTrip = found;
+    // Auto-collapse picker after selection
+    isDriverPickerOpen = false;
+    const drawer = document.getElementById('drv-picker-drawer');
+    const btnText = document.getElementById('drv-picker-btn-text');
+    if (drawer) drawer.style.display = 'none';
+    if (btnText) btnText.textContent = 'Змінити рейс ▾';
+    renderDriverCockpit();
+  }
+}
+
+function getDriverTripProgress(dir, tripTime, routeType) {
+  const matches = liveReports.filter(r =>
+    r.direction === dir &&
+    r.trip_time === tripTime &&
+    r.route_type === routeType &&
+    r.report_type === 'driver'
+  );
+
+  const passedMap = {};
+  let status = 'none';
+  let latestStop = null;
+  let latestTime = null;
+
+  matches.forEach(r => {
+    if (r.status === 'cancelled') status = 'cancelled';
+    else if (r.status === 'delayed_10' && status !== 'cancelled') status = 'delayed_10';
+    else if (r.status === 'ok' && status !== 'cancelled') status = 'ok';
+
+    if (r.stop_name && r.stop_name !== 'base' && !passedMap[r.stop_name]) {
+      const t = r.created_at ? r.created_at.slice(11, 16) : '✅';
+      passedMap[r.stop_name] = t;
+      if (!latestStop) {
+        latestStop = r.stop_name;
+        latestTime = t;
+      }
+    }
+  });
+
+  return { passedMap, status, latestStop, latestTime };
+}
+
+function renderDriverCockpit() {
+  if (!isDriverMode) return;
+
+  // 1. Update Route cards active status
+  document.querySelectorAll('.drv-route-card').forEach(c => c.classList.remove('active'));
+  const activeCard = document.getElementById(`drv-r-${drvRoute}`);
+  if (activeCard) activeCard.classList.add('active');
+
+  // 2. Update Direction tabs
+  const bPidg = document.getElementById('btn-drv-dir-to-pidg');
+  const bTern = document.getElementById('btn-drv-dir-to-tern');
+  if (bPidg) bPidg.classList.toggle('active', drvDir === 'to-pidg');
+  if (bTern) bTern.classList.toggle('active', drvDir === 'to-tern');
+
+  // 3. Ensure a trip is selected
+  const trips = getDriverTripsList();
+  if (!drvSelectedTrip || !trips.some(b => b.t === drvSelectedTrip.t)) {
+    autoPickDriverTrip();
+  }
+
+  // 4. Render Trip Strip
+  const strip = document.getElementById('drv-trip-strip');
+  const countEl = document.getElementById('drv-trips-count');
+  if (countEl) countEl.textContent = `${trips.length} рейсів`;
+
+  if (strip) {
+    strip.innerHTML = trips.map(b => {
+      const isSel = drvSelectedTrip && b.t === drvSelectedTrip.t;
+      const prog = getDriverTripProgress(drvDir, b.t, b.r);
+      const isCanc = prog.status === 'cancelled';
+      const hasProg = prog.status === 'ok' && Object.keys(prog.passedMap).length > 0;
+      const isDel = prog.status === 'delayed_10';
+
+      let dot = '';
+      if (isCanc) dot = '✕';
+      else if (isDel) dot = '!';
+      else if (hasProg) dot = '•';
+
+      return `
+        <button class="drv-trip-chip ${isSel ? 'active' : ''} ${hasProg ? 'has-progress' : ''} ${isCanc ? 'cancelled' : ''}" onclick="selectDriverTrip('${b.t}')">
+          ${dot ? `<span>${dot}</span>` : ''}
+          <span>${b.t}</span>
+        </button>
+      `;
+    }).join('');
+  }
+
+  if (!drvSelectedTrip) return;
+
+  // 5. Active Trip Compact Bar
+  const r = routes[drvRoute] || { name: 'Підгородне' };
+  const atbTime = document.getElementById('drv-atb-time');
+  const atbRoute = document.getElementById('drv-atb-route');
+  const atbDir = document.getElementById('drv-atb-dir');
+  if (atbTime) atbTime.textContent = drvSelectedTrip ? drvSelectedTrip.t : '--:--';
+  if (atbRoute) atbRoute.textContent = r.name;
+  if (atbDir) {
+    atbDir.textContent = drvDir === 'to-pidg'
+      ? `АС-2 (Тернопіль) ➔ ${r.name}`
+      : `${r.name} ➔ АС-2 (Тернопіль)`;
+  }
+
+  // Update Header title for Driver
+  const brandH1 = document.getElementById('brand-title-h1');
+  const headerSub = document.getElementById('header-sub');
+  if (brandH1) brandH1.innerHTML = `<span>🚍 Пульт водія</span>`;
+  if (headerSub) headerSub.textContent = `${r.name} • ${drvSelectedTrip ? drvSelectedTrip.t : ''}`;
+
+  // Target Stop & Focus Hero
+  const stops = stopsConfig[drvDir];
+  const baseMin = toMin(drvSelectedTrip.t);
+  const tripProg = getDriverTripProgress(drvDir, drvSelectedTrip.t, drvSelectedTrip.r);
+
+  let targetStop = null;
+  for (let s of stops) {
+    if (!tripProg.passedMap[s.name]) {
+      targetStop = s;
+      break;
+    }
+  }
+
+  const focusStopName = document.getElementById('drv-focus-stop-name');
+  const focusEta = document.getElementById('drv-focus-eta');
+  const tStatusRow = document.getElementById('drv-trip-status-row');
+
+  if (targetStop) {
+    if (focusStopName) focusStopName.textContent = `${targetStop.approx ? '~' : ''}${targetStop.name} (${targetStop.sub})`;
+    if (focusEta) focusEta.textContent = `~${toTime(baseMin + targetStop.offset)}`;
+  } else {
+    if (focusStopName) focusStopName.textContent = `🏁 Кінцева зупинка прибуття`;
+    if (focusEta) focusEta.textContent = `Рейс завершено`;
+  }
+
+  if (tStatusRow) {
+    if (tripProg.status === 'cancelled') {
+      tStatusRow.innerHTML = `<span class="badge badge-driver-cancel">РЕЙС СКАСОВАНО ВАМИ</span>`;
+    } else if (tripProg.status === 'delayed_10') {
+      tStatusRow.innerHTML = `<span class="badge badge-driver-delay">ПОВІДОМЛЕНО ПРО ЗАТРИМКУ (+5–10 ХВ)</span>`;
+    } else if (tripProg.status === 'ok' && tripProg.latestStop) {
+      tStatusRow.innerHTML = `<span class="badge badge-driver-ok">У ДОРОЗІ: щойно «${tripProg.latestStop}» (${tripProg.latestTime})</span>`;
+    } else {
+      tStatusRow.innerHTML = `<span style="font-size:12px;color:var(--text-tertiary);font-weight:600;">Рейс за розкладом</span>`;
+    }
+  }
+
+  // 6. Stop Stepper (Дорога по зупинках)
+  const stepper = document.getElementById('drv-stepper');
+  const passedStops = stops.filter(s => Boolean(tripProg.passedMap[s.name]));
+  const unpassedStops = stops.filter(s => !tripProg.passedMap[s.name]);
+
+  function renderStopItem(s, idx) {
+    const isPassed = Boolean(tripProg.passedMap[s.name]);
+    const isTarget = targetStop && s.id === targetStop.id;
+    const schedTime = toTime(baseMin + s.offset);
+
+    let itemClass = 'stepper-item';
+    let iconContent = `${idx + 1}`;
+    let badgeHtml = '';
+
+    if (isPassed) {
+      itemClass += ' passed';
+      iconContent = '✓';
+      badgeHtml = `<span class="stepper-badge sbadge-passed">✓ ${tripProg.passedMap[s.name]}</span>`;
+    } else if (isTarget) {
+      itemClass += ' current';
+      badgeHtml = `<span class="stepper-badge sbadge-target">НАСТУПНА</span>`;
+    } else {
+      itemClass += ' upcoming';
+    }
+
+    return `
+      <div class="${itemClass}" onclick="drvReportSpecificStop('${s.name}')" title="Натисніть для відмітки цієї зупинки">
+        <div class="stepper-icon-col">${iconContent}</div>
+        <div class="stepper-info">
+          <div class="stepper-name-row">
+            <span class="stepper-stop-name">${s.approx ? '~' : ''}${s.name}</span>
+            <div style="display:flex;align-items:center;">
+              <span class="stepper-time">~${schedTime}</span>
+              ${badgeHtml}
+            </div>
+          </div>
+          <div class="stepper-sub">${s.sub}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (stepper) {
+    let stepperHtml = '';
+    if (passedStops.length >= 2) {
+      stepperHtml += `
+        <div class="drv-passed-accordion" onclick="toggleDrvPassedStops()">
+          <span>✅ Пройдено ${passedStops.length} зупинок (${passedStops.map(s => s.name).join(' → ')})</span>
+          <span style="font-size:11.5px;color:var(--accent);font-weight:700;">${showDrvPassedStops ? 'Згорнути ▴' : 'Показати ▾'}</span>
+        </div>
+      `;
+      if (showDrvPassedStops) {
+        stepperHtml += passedStops.map((s, idx) => renderStopItem(s, idx)).join('');
+      }
+      stepperHtml += unpassedStops.map((s, idx) => renderStopItem(s, passedStops.length + idx)).join('');
+    } else {
+      stepperHtml = stops.map((s, idx) => renderStopItem(s, idx)).join('');
+    }
+    stepper.innerHTML = stepperHtml;
+  }
+
+  // 7. Giant Advance Button
+  const btnAdvance = document.getElementById('btn-drv-advance');
+  const advSub = document.getElementById('drv-adv-sub');
+  const advTitle = document.getElementById('drv-adv-title');
+
+  if (btnAdvance && advSub && advTitle) {
+    if (targetStop) {
+      btnAdvance.className = 'btn-drv-big-advance';
+      advSub.textContent = 'ПРОЇХАЛИ ЗУПИНКУ?';
+      advTitle.textContent = `Відзначити: «${targetStop.name}»`;
+    } else {
+      btnAdvance.className = 'btn-drv-big-advance finished';
+      advSub.textContent = 'РЕЙС ПРИБУВ НА КІНЦЕВУ!';
+      const oppDir = drvDir === 'to-pidg' ? 'to-tern' : 'to-pidg';
+      const oppTrips = (oppDir === 'to-pidg' ? scheduleToPidg : scheduleToTern).filter(b => b.r === drvRoute);
+      const now = new Date();
+      const cur = now.getHours() * 60 + now.getMinutes();
+      const nextOpp = oppTrips.find(b => toMin(b.t) >= cur - 10) || oppTrips[0];
+      advTitle.textContent = `Почати зворотний рейс ${nextOpp ? nextOpp.t : ''} ➔`;
+    }
+  }
+
+  // 8. Passenger Live Preview Box
+  const prevContent = document.getElementById('drv-prev-content');
+  if (prevContent) {
+    if (tripProg.status === 'cancelled') {
+      prevContent.innerHTML = `Пасажири бачать: <b>«Водій зняв рейс ${drvSelectedTrip.t} (${r.name})»</b>`;
+    } else if (tripProg.status === 'delayed_10') {
+      prevContent.innerHTML = `Пасажири бачать: <b>«Водій повідомив про затримку рейсу +5–10 хв»</b>`;
+    } else if (tripProg.latestStop) {
+      const nextName = targetStop ? `«${targetStop.name}»` : 'Кінцевої';
+      prevContent.innerHTML = `Пасажири бачать: <b>«Водій у дорозі: щойно проїхав «${tripProg.latestStop}» (${tripProg.latestTime}) ➔ прямує до ${nextName}»</b>`;
+    } else {
+      prevContent.innerHTML = `Пасажири бачать: рейс за розкладом о <b>${drvSelectedTrip.t}</b> (${r.name}).`;
+    }
+  }
+}
+
+async function drvAdvanceCurrentStop() {
+  if (!drvSelectedTrip) return;
+  const stops = stopsConfig[drvDir];
+  const tripProg = getDriverTripProgress(drvDir, drvSelectedTrip.t, drvSelectedTrip.r);
+
+  let targetStop = null;
+  for (let s of stops) {
+    if (!tripProg.passedMap[s.name]) {
+      targetStop = s;
+      break;
+    }
+  }
+
+  if (targetStop) {
+    await drvReportSpecificStop(targetStop.name);
+  } else {
+    const newDir = drvDir === 'to-pidg' ? 'to-tern' : 'to-pidg';
+    setDriverDirection(newDir);
+  }
+}
+
+async function drvReportSpecificStop(stopName) {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+async function submitDriverTripStatus(statusVal) {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+async function resetDriverTripStops() {
+  alert('Повідомлення про рух і кабінет водія тимчасово недоступні. Розклад працює.');
+}
+
+// ── Update all ──
+function updateAll() { updateClock(); updateHero(); renderSchedule(); }
+
+// ── Cache clear ──
+function clearAppCache() {
+  if (confirm('Оновити розклад та скинути налаштування цього додатка?')) {
+    ['selectedStops_v2', 'selectedRoutes', 'pwa_toast_dismissed_v1', 'isDriverMode', 'driverPin', 'drvRoute'].forEach(key => localStorage.removeItem(key));
+    window.location.replace(window.location.pathname + '?v=' + Date.now());
+  }
+}
+
+// ── PWA Installation Logic ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('btn-pwa-install');
+  if (btn) btn.style.display = 'inline-flex';
+});
+
+async function triggerPwaInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      deferredPrompt = null;
+      const btn = document.getElementById('btn-pwa-install');
+      if (btn) btn.style.display = 'none';
+      closeModal('install-modal');
+    }
+  } else {
+    copyDirectBusLink();
+    alert('Посилання скопійовано! Відкрийте його у Safari (на iPhone) або Chrome (на Android), щоб зберегти додаток на робочий стіл.');
+  }
+}
+
+function copyDirectBusLink() {
+  const url = window.location.origin + '/pidhorodne-bus-live/';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      const txt = document.getElementById('btn-copy-link-text');
+      if (txt) {
+        txt.textContent = 'Скопійовано!';
+        setTimeout(() => { txt.textContent = 'Скопіювати'; }, 2500);
+      }
+    }).catch(() => { fallbackCopyText(url); });
+  } else {
+    fallbackCopyText(url);
+  }
+}
+
+function fallbackCopyText(text) {
+  const inp = document.getElementById('pwa-direct-url');
+  if (inp) {
+    inp.select();
+    document.execCommand('copy');
+    const txt = document.getElementById('btn-copy-link-text');
+    if (txt) {
+      txt.textContent = 'Скопійовано!';
+      setTimeout(() => { txt.textContent = 'Скопіювати'; }, 2500);
+    }
+  }
+}
+
+// ── PWA Install Floating Toast Popup ──
+function checkAndShowPwaToast() {
+  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (isStandalone) return;
+  if (isDriverMode && driverViewMode === 'cockpit') return;
+
+  const dismissedTime = localStorage.getItem('pwa_toast_dismissed_v1');
+  if (dismissedTime) {
+    const daysSince = (Date.now() - parseInt(dismissedTime, 10)) / (1000 * 60 * 60 * 24);
+    if (daysSince < 5) return;
+  }
+
+  setTimeout(() => {
+    const toast = document.getElementById('pwa-install-toast');
+    if (toast && !document.querySelector('.modal-overlay.open')) {
+      toast.style.display = 'block';
+      requestAnimationFrame(() => {
+        toast.classList.add('visible');
+      });
+    }
+  }, 1200);
+}
+
+function dismissPwaToast() {
+  const toast = document.getElementById('pwa-install-toast');
+  if (toast) {
+    toast.classList.remove('visible');
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 350);
+  }
+  try {
+    localStorage.setItem('pwa_toast_dismissed_v1', Date.now().toString());
+  } catch(e) {}
+  tgHaptic('selection');
+}
+
+function openPwaInstallFromToast() {
+  dismissPwaToast();
+  navToInstall();
+}
+
+function copyDirectBusLinkFromToast(btn) {
+  copyDirectBusLink();
+  tgHaptic('impact_light');
+  if (btn) {
+    const origHtml = btn.innerHTML;
+    btn.innerHTML = '<span>✓ Скопійовано!</span>';
+    btn.style.background = 'var(--accent-soft)';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => {
+      btn.innerHTML = origHtml;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2200);
+  }
+}
+
+// ── Native Sheet Drag-Down Gesture ──
+function setupSheetDragGestures() {
+  document.querySelectorAll('.modal-sheet').forEach(sheet => {
+    let startY = 0;
+    let currentY = 0;
+
+    sheet.addEventListener('touchstart', (e) => {
+      if (sheet.scrollTop <= 0) {
+        startY = e.touches[0].clientY;
+      } else {
+        startY = 0;
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchmove', (e) => {
+      if (startY > 0) {
+        currentY = e.touches[0].clientY;
+        const diff = currentY - startY;
+        if (diff > 0) {
+          sheet.style.transform = `translateY(${diff * 0.55}px)`;
+        }
+      }
+    }, { passive: true });
+
+    sheet.addEventListener('touchend', () => {
+      if (startY > 0 && currentY - startY > 65) {
+        const overlay = sheet.closest('.modal-overlay');
+        sheet.style.transform = '';
+        if (overlay) {
+          tgHaptic('light');
+          closeModal(overlay.id);
+        }
+      } else {
+        sheet.style.transform = '';
+      }
+      startY = 0;
+      currentY = 0;
+    }, { passive: true });
+  });
+}
+
+// ── Init ──
+setInterval(updateClock, 1000);
+setInterval(() => { updateHero(); renderSchedule(); }, 20000);
+
+
+setDirection(curDir);
+fetchWeather();
+fetchLiveReports();
+applyDriverMode();
+setupSheetDragGestures();
+checkAndShowPwaToast();
+
+window.addEventListener('resize', () => {
+  updateDockIndicator();
+  updateDirIndicator();
+});
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    syncBottomBarState();
+    updateDirIndicator();
+  }, 60);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeAllModals();
+    syncBottomBarState();
+  }
+});
+
+setTimeout(() => {
+  syncBottomBarState();
+  updateDirIndicator();
+}, 60);
+
+setTimeout(() => {
+  syncBottomBarState();
+  updateDirIndicator();
+}, 300);
+</script>
+
+</body>
+</html>
