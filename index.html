@@ -1678,7 +1678,7 @@ button[onclick*="report-modal"], #my-report-notice { display:none !important; }
       </span>
       <div class="title-group">
         <h1 id="brand-title-h1">Автобуси ОТГ</h1>
-        <p id="header-sub">Розклад приміських автобусів</p>
+        <p id="header-sub">Розклад · київський час</p>
       </div>
     </div>
     <div class="clock"><span class="clock-dot"></span><span id="live-clock">--:--</span></div>
@@ -2526,8 +2526,16 @@ function pickRoute(filter, el) {
   updateAll();
 }
 
+function getKyivNow(instant = new Date()) {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Kyiv', year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+  }).formatToParts(instant).map(p => [p.type, p.value]));
+  return new Date(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+}
+
 function updateClock() {
-  const now = new Date();
+  const now = getKyivNow();
   document.getElementById('live-clock').textContent =
     now.toLocaleTimeString('uk-UA', { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false });
 }
@@ -2540,7 +2548,7 @@ function getList() {
 
 // Auto-skip cancelled trips in hero countdown for passengers & return upcoming departures
 function findNext() {
-  const now = new Date();
+  const now = getKyivNow();
   const cur = now.getHours()*60 + now.getMinutes();
   const list = getList();
   const offset = getStopOffset();
@@ -2951,7 +2959,7 @@ function addTripToCalendar() {
   const time = busTimeAtStop(next);
   const r = routes[next.r];
 
-  const now = new Date();
+  const now = getKyivNow();
   if (tomorrow) now.setDate(now.getDate() + 1);
 
   const [hours, minutes] = time.split(':').map(Number);
@@ -2969,8 +2977,8 @@ function addTripToCalendar() {
     `SUMMARY:🚌 Автобус: ${r.name}`,
     `DESCRIPTION:Посадка на зупинці ${stopInfo.name} (${stopInfo.sub}) о ${time}. Напрямок: ${curDir === 'to-pidg' ? 'Підгородне' : 'Тернопіль'}.`,
     `LOCATION:${stopInfo.name}, Тернопіль`,
-    `DTSTART:${formatICSDate(startDate)}`,
-    `DTEND:${formatICSDate(endDate)}`,
+    `DTSTART;TZID=Europe/Kyiv:${formatICSDate(startDate)}`,
+    `DTEND;TZID=Europe/Kyiv:${formatICSDate(endDate)}`,
     'BEGIN:VALARM',
     'TRIGGER:-PT10M',
     'ACTION:DISPLAY',
@@ -3260,7 +3268,7 @@ function autoPickDriverTrip() {
     drvSelectedTrip = null;
     return;
   }
-  const now = new Date();
+  const now = getKyivNow();
   const cur = now.getHours() * 60 + now.getMinutes();
 
   let found = trips.find(b => toMin(b.t) >= cur - 25);
@@ -3495,7 +3503,7 @@ function renderDriverCockpit() {
       advSub.textContent = 'РЕЙС ПРИБУВ НА КІНЦЕВУ!';
       const oppDir = drvDir === 'to-pidg' ? 'to-tern' : 'to-pidg';
       const oppTrips = (oppDir === 'to-pidg' ? scheduleToPidg : scheduleToTern).filter(b => b.r === drvRoute);
-      const now = new Date();
+      const now = getKyivNow();
       const cur = now.getHours() * 60 + now.getMinutes();
       const nextOpp = oppTrips.find(b => toMin(b.t) >= cur - 10) || oppTrips[0];
       advTitle.textContent = `Почати зворотний рейс ${nextOpp ? nextOpp.t : ''} ➔`;
